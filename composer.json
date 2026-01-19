@@ -2,7 +2,8 @@
     "name": "ayoub/clubedge",
     "autoload": {
         "psr-4": {
-            "Ayoub\\Clubedge\\": "src/"
+            "app\\": "app/",
+            "core\\": "core/"
         }
     },
     "authors": [
