@@ -1,3 +1,6 @@
+CREATE DATABASE Club_Edge;
+
+\c club_edge;
 
 CREATE TYPE user_role AS ENUM ('etudiant', 'president', 'admin');
 
