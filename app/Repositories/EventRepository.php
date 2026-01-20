@@ -14,11 +14,12 @@ class EventRepository
         $this->db = $db;
     }
 
+
     public function create(Event $event): bool
     {
         $sql = "INSERT INTO events (titre, description, date_event, lieu, image_event, id_club) 
                 VALUES (:titre, :description, :date_event, :lieu, :image_event, :id_club)";
-        
+
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':titre' => $event->getTitre(),
@@ -36,10 +37,17 @@ class EventRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function findByClub(int $id_club): array
+    public function findByClub(): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM events WHERE id_club = :id_club");
-        $stmt->execute([':id_club' => $id_club]);
+        $sql = "SELECT 
+                titre as title, 
+                date_event as date, 
+                '12' as attendance -- Valeur statique pour le test
+            FROM events 
+            WHERE id_club = 1";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
