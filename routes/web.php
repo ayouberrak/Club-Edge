@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\ArticlesController;
 use Core\Router;
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
@@ -24,7 +25,14 @@ $router->get('/dashboard/events', [DashboardController::class, 'studentEvents'])
 $router->get('/dashboard/articles', [DashboardController::class, 'studentArticles']);
 
 $router->get('/dashboard/president', [DashboardController::class, 'president']); // President Members
+
 $router->get('/dashboard/president/events', [DashboardController::class, 'presidentEvents']);
+$router->post('/dashboard/president/events', [ArticlesController::class, 'createArticle']);
+
+$router->get('/dashboard/president/articles/success', [ArticlesController::class, 'articleSuccess']);
+$router->get('/dashboard/president/articles/failure', [ArticlesController::class, 'articleFailure']);
+
+
 $router->get('/dashboard/president/articles', [DashboardController::class, 'presidentArticles']);
 
 $router->get('/dashboard/admin', [DashboardController::class, 'admin']); // Admin Clubs
@@ -32,6 +40,5 @@ $router->get('/dashboard/admin/students', [DashboardController::class, 'adminStu
 $router->get('/dashboard/admin/logs', [DashboardController::class, 'adminLogs']);
 $router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
 
-$router->post('/dashboard/club/create', [DashboardController::class, 'createClub']);
 
 $router->dispatch();
