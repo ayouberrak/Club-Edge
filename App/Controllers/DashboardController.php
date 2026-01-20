@@ -80,4 +80,28 @@ class DashboardController extends Controller
             ]
         ]);
     }
+
+    public function adminClubDetails($id)
+    {
+        // Mock data for a specific club (e.g., Robotics Club)
+        return $this->render('dashboards.admin_club_details', [
+            'club' => [
+                'id' => $id,
+                'name' => 'Robotics Club',
+                'president' => 'Anas Errak',
+                'members' => 5,
+                'capacity' => 8,
+                'status' => 'active',
+                'description' => 'The premier robotics and automation research center on campus.'
+            ],
+            'events' => [
+                ['id' => 1, 'title' => 'Global AI Summit', 'date' => 'Oct 24, 2026', 'attendance' => 156],
+                ['id' => 2, 'title' => 'Workshop: Neural Networks', 'date' => 'Nov 12, 2026', 'attendance' => 42]
+            ],
+            'articles' => [
+                ['id' => 1, 'title' => 'How we built our first humanoid', 'author' => 'Anas Errak', 'date' => '2 days ago'],
+                ['id' => 2, 'title' => 'The future of campus robotics', 'author' => 'Mehdi Ray', 'date' => '1 week ago']
+            ]
+        ]);
+    }
 }

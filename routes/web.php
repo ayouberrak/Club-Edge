@@ -22,5 +22,6 @@ $router->get('/club/{id}', [ClubController::class, 'show']);
 $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/dashboard/president', [DashboardController::class, 'president']);
 $router->get('/dashboard/admin', [DashboardController::class, 'admin']);
+$router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
 
 $router->dispatch();
