@@ -5,8 +5,10 @@
     showEventModal: false, 
     showArticleModal: false, 
     articleEventTitle: '',
-    openArticleFor(title) {
+    articleEventId: null,
+    openArticleFor(title, id) {
         this.articleEventTitle = title;
+        this.articleEventId = id;
         this.showArticleModal = true;
     }
 }">
@@ -52,21 +54,51 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <h1 class="text-4xl font-bold font-outfit tracking-tighter uppercase">Club <span class="text-indigo-500">Nexus</span></h1>
-                <p class="text-slate-400 text-sm">Managing the **{{ $club['name'] }}** universe.</p>
             </div>
-            @if(isset($club['members_count']) && isset($club['max_members']))
-            <div class="flex items-center space-x-3 glass p-2 rounded-2xl border border-white/5">
-                <div class="px-4 py-2 bg-indigo-500/20 text-indigo-400 rounded-xl text-xs font-black">
-                    {{ $club['members_count'] }} / {{ $club['max_members'] }} CAPACITY
-                </div>
-            </div>
-            @endif
         </div>
 
         @yield('president_content')
     </div>
 
     <!-- Modals (Common for all president pages) -->
+    <div id="message" 
+        class="fixed top-10 right-10 z-[200] min-w-[300px] transform transition-all duration-500 ease-out"
+        x-data="{ show: {{ $message ? 'true' : 'false' }} }"
+        x-show="show"
+        x-init="setTimeout(() => show = false, 4000)"
+        x-transition:enter="translate-x-full opacity-0"
+        x-transition:enter-end="translate-x-0 opacity-100"
+        x-transition:leave="translate-y-[-20px] opacity-0">
+        
+        <div class="glass flex items-center p-5 rounded-[1.5rem] border shadow-2xl {{ $type === 'success' ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-rose-500/30 bg-rose-500/10' }}">
+            
+            <div class="mr-4 flex-shrink-0">
+                @if($type === 'success')
+                    <div class="p-2 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/40 text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                @else
+                    <div class="p-2 bg-rose-500 rounded-xl shadow-lg shadow-rose-500/40 text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </div>
+                @endif
+            </div>
+
+            <div class="flex flex-col">
+                <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-0.5">
+                    {{ $type === 'success' ? 'Bravo!' : 'Attention' }}
+                </h3>
+                <p class="text-white font-bold text-sm leading-tight italic">
+                    {{ $message ?? '' }}
+                </p>
+            </div>
+
+            <button @click="show = false" class="ml-auto pl-6 text-slate-500 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+        </div>
+    </div>
+
     
     <!-- New Event Modal -->
     <div x-show="showEventModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md" x-cloak x-transition>
@@ -87,11 +119,11 @@
             <h2 class="text-2xl font-black mb-4 uppercase tracking-tighter">Post-Event <span class="text-indigo-500">Article</span></h2>
             <p class="text-slate-500 text-sm mb-10">Sharing insights for: <span x-text="articleEventTitle" class="text-white font-bold italic"></span></p>
             
-            <form class="space-y-6">
-
+            <form class="space-y-6" method="post" action="{{ $base_url }}/dashboard/president/events" enctype="multipart/form-data">
+                <input type="hidden" name="id_event" :value="articleEventId">
+                
                 <div class="relative group">
-                    <input type="hidden" name="id_event">
-                    <input type="file" id="articleImage" class="hidden" accept="image/*"  name="articleImage"
+                    <input type="file" id="articleImage" class="hidden" accept="image/*" name="image_article"
                         @change="const file = $event.target.files[0]; if (file) { imageUrl = URL.createObjectURL(file) }">
                     
                     <label for="articleImage" class="cursor-pointer flex flex-col items-center justify-center w-full h-32 bg-slate-900/30 border-2 border-dashed border-white/10 rounded-2xl hover:border-indigo-500/50 transition-colors overflow-hidden">
@@ -109,11 +141,14 @@
                     </label>
                 </div>
 
-                <textarea class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none h-48" placeholder="Tell the world what happened..." name="contenu"></textarea>
+                <div>
+                    <label class="block text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] mb-3">Content (Mandatory)</label>
+                    <textarea class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none h-48" placeholder="Tell the world what happened..." name="contenu" required></textarea>
+                </div>
                 
                 <div class="flex gap-4">
-                    <button type="button" @click="showArticleModal = false; imageUrl = null" class="flex-1 py-4 text-slate-500 font-bold uppercase tracking-widest text-xs">Discard</button>
-                    <button type="button" @click="showArticleModal = false; activeTab = 'articles'; imageUrl = null; $dispatch('toast', { message: 'Article published for everyone!', type: 'success' })" class="flex-[3] bg-indigo-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-xl shadow-indigo-600/20">POST STORY</button>
+                    <button type="button" @click="showArticleModal = false; imageUrl = null" class="flex-1 py-4 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">Discard</button>
+                    <button type="submit" class="flex-[3] bg-indigo-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:scale-[1.02] transition-all">POST STORY</button>
                 </div>
             </form>
         </div>
