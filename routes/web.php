@@ -19,9 +19,17 @@ $router->get('/logout', [AuthController::class, 'logout']);
 $router->get('/club/{id}', [ClubController::class, 'show']);
 
 // Dashboard Routes
-$router->get('/dashboard', [DashboardController::class, 'index']);
-$router->get('/dashboard/president', [DashboardController::class, 'president']);
-$router->get('/dashboard/admin', [DashboardController::class, 'admin']);
+$router->get('/dashboard', [DashboardController::class, 'index']); // Student Overview
+$router->get('/dashboard/events', [DashboardController::class, 'studentEvents']);
+$router->get('/dashboard/articles', [DashboardController::class, 'studentArticles']);
+
+$router->get('/dashboard/president', [DashboardController::class, 'president']); // President Members
+$router->get('/dashboard/president/events', [DashboardController::class, 'presidentEvents']);
+$router->get('/dashboard/president/articles', [DashboardController::class, 'presidentArticles']);
+
+$router->get('/dashboard/admin', [DashboardController::class, 'admin']); // Admin Clubs
+$router->get('/dashboard/admin/students', [DashboardController::class, 'adminStudents']);
+$router->get('/dashboard/admin/logs', [DashboardController::class, 'adminLogs']);
 $router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
 
 $router->dispatch();
