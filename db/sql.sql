@@ -18,10 +18,12 @@ CREATE TABLE users (
 -- 4. Clubs Table
 CREATE TABLE clubs (
     id_club SERIAL PRIMARY KEY,
-    nom VARCHAR(100) NOT NULL,
+    nom VARCHAR(100) NOT NULL UNIQUE, 
     description TEXT,
-    max_membres INT DEFAULT 8 CHECK (max_membres = 8), 
+    max_membres INT DEFAULT 8 CHECK (max_membres > 0), 
     id_president INT UNIQUE,
+    image_url VARCHAR(255) DEFAULT 'default-club.jpg', 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_president) REFERENCES users(id_user) ON DELETE SET NULL 
 );
 
