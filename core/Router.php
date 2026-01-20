@@ -15,6 +15,7 @@ class Router {
     public function dispatch() {
         $method = $_SERVER['REQUEST_METHOD'];
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $path = urldecode($path);
         
         $path = str_replace('\\', '/', $path);
         
@@ -67,16 +68,12 @@ class Router {
             call_user_func($callback);
         } else {
             http_response_code(404);
-            echo "<div style='font-family:monospace; background:#f8d7da; padding:20px; color:#721c24;'>";
-            echo "<strong>404 Not Found</strong><br>";
-            echo "The requested URL was not found on this server.<br><br>";
-            echo "<strong>Debug Info:</strong><br>";
-            echo "Method: $method<br>";
-            echo "Raw URI: " . $_SERVER['REQUEST_URI'] . "<br>";
-            echo "Calculated Path: $path<br>";
-            echo "Script Dir: $scriptDir<br>";
-            echo "Available Routes: <pre>" . print_r(array_keys($this->routes[$method] ?? []), true) . "</pre>";
-            echo "</div>";
+            $controller = new \Core\Controller();
+            // We need to manually trigger the render because it's usually protected
+            $reflection = new \ReflectionClass($controller);
+            $method = $reflection->getMethod('render');
+            $method->setAccessible(true);
+            $method->invoke($controller, 'errors.404', ['title' => '404 - Not Found']);
         }
     }
 }

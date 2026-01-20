@@ -35,7 +35,6 @@ class Database
             
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            // echo 'reusi';
         } catch (PDOException $e) {
             throw new Exception("Erreur de connexion à la base de données.");
         }
@@ -55,10 +54,5 @@ class Database
     {
         return $this->pdo;
     }
-    // public static function showConfig()
-    // {
-    //    Database::getInstance();
-
-    // }
 }
 

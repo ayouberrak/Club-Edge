@@ -2,7 +2,8 @@
     "name": "ayoub/clubedge",
     "autoload": {
         "psr-4": {
-            "Ayoub\\Clubedge\\": "src/"
+            "App\\": "app/",
+            "Core\\": "core/"
         }
     },
     "authors": [
@@ -12,8 +13,21 @@
         }
     ],
     "require": {
-        "illuminate/view": "^12.47",
-        "illuminate/filesystem": "^12.47",
-        "illuminate/events": "^12.47"
+        "php": ">=8.2.0 <8.4.0",
+        "illuminate/view": "^11.0",
+        "illuminate/filesystem": "^11.0",
+        "illuminate/events": "^11.0",
+        "symfony/translation": "^7.0",
+        "symfony/clock": "^7.0",
+        "symfony/finder": "^7.0"
+    },
+    "config": {
+        "platform": {
+            "php": "8.2.12"
+        },
+        "platform-check": false,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }

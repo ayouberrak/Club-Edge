@@ -11,11 +11,7 @@ class Controller
         $this->view = require __DIR__ . '/../bootstrap/blade.php';
 
         // base_url (global)
-        $scriptName = $_SERVER['SCRIPT_NAME'];
-        $dir = dirname($scriptName);
-        $dir = str_replace('\\', '/', $dir);
-        if ($dir === '/') $dir = '';
-
+        $dir = \Core\Helpers::url();
         $this->view->share('base_url', $dir);
 
         $this->helperUrl();
