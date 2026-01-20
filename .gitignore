@@ -1,3 +1,5 @@
 /vendor
 /cache
 /logs
+/.env
+/public/upload
