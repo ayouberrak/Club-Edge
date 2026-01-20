@@ -44,7 +44,7 @@ class EventRepository
                 date_event as date, 
                 '12' as attendance -- Valeur statique pour le test
             FROM events 
-            WHERE id_club = 1";
+            WHERE id_club = 2";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute();

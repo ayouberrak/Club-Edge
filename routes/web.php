@@ -33,4 +33,5 @@ $router->get('/dashboard/admin/students', [DashboardController::class, 'adminStu
 $router->get('/dashboard/admin/logs', [DashboardController::class, 'adminLogs']);
 $router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
 $router->get('/dashboard/admin/club', [ClubController::class, 'testClubDetails']);
+$router->get('/test-create-event', [App\Controllers\ClubController::class, 'testCreateEvent']);
 $router->dispatch();
