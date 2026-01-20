@@ -34,7 +34,7 @@ class Article
     }
 
     public function getIdEvent(): int { return $this->id_event; }
-    public function getCreatedAt(): string { return $this->created_at; }
+    public function getCreatedAt(): ?string { return $this->created_at; }
 
     // Setters
     public function setContenu(string $c): void { $this->contenu = $c; }
@@ -45,10 +45,10 @@ class Article
     public static function arrayToArticle($data): Article
     {
         return new Article(
-            $data['id_article'] ? null : $data['id_article'],
+            null,
             $data['contenu'],
             $data['id_event'],
-            $data['articleImage'],
+            $data['image_article'] ,
         );
     }
 }
