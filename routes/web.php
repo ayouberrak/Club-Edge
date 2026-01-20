@@ -23,4 +23,6 @@ $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/dashboard/president', [DashboardController::class, 'president']);
 $router->get('/dashboard/admin', [DashboardController::class, 'admin']);
 
+$router->post('/dashboard/club/create', [DashboardController::class, 'createClub']);
+
 $router->dispatch();
