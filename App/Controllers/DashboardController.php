@@ -8,8 +8,15 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Student Dashboard Overview
-        return $this->render('dashboards.student.index', [
+       if(session_status() === PHP_SESSION_NONE) session_start();
+
+        if(!isset($_SESSION['user_id'])) {
+            header('Location: ' . $this->view->shared('base_url') . '/login');
+            exit;
+        }
+
+        // Student Dashboard Data
+        return $this->render('dashboards.student', [
             'my_club' => [
                 'id' => 1,
                 'name' => 'Robotics Club',
@@ -42,8 +49,16 @@ class DashboardController extends Controller
 
     public function president()
     {
-        // President Dashboard: Members
-        return $this->render('dashboards.president.index', [
+
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'president') {
+            header('Location: '. $this->view->shared('base_url') . '/dashboard');
+            exit;
+        }
+
+        // President Dashboard Data (Manages Robotics Club)
+        return $this->render('dashboards.president', [
             'club' => [
                 'name' => 'Robotics Club',
                 'members_count' => 5,
@@ -79,9 +94,23 @@ class DashboardController extends Controller
 
     public function admin()
     {
-        // Admin Dashboard: Manage Clubs
-        return $this->render('dashboards.admin.index', [
-            'stats' => $this->getAdminStats(),
+
+
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'admin') {
+            header('Location: '. $this->view->shared('base_url') . '/dashboard');
+            exit;
+        }
+    
+        // Admin Dashboard Data
+        return $this->render('dashboards.admin', [
+            'stats' => [
+                'total_clubs' => 6,
+                'total_students' => 428,
+                'pending_reviews' => 14,
+                'active_events' => 8
+            ],
             'clubs' => [
                 ['id' => 1, 'name' => 'Robotics Club', 'president' => 'Anas Errak', 'members' => 5, 'capacity' => 8, 'status' => 'active'],
                 ['id' => 2, 'name' => 'Music Club', 'president' => 'Mehdi Ray', 'members' => 8, 'capacity' => 8, 'status' => 'full'],

@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="flex justify-center items-center py-20">
     <div class="glass p-10 rounded-3xl border border-slate-700 w-full max-w-lg">
         <div class="text-center mb-10">
@@ -8,8 +6,8 @@
             <p class="text-slate-400">Join the student community and start exploring</p>
         </div>
         
-        <form action="{{ $base_url }}/register" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input type="hidden" name="csrf_token" value="{{ $_SESSION['csrf_token'] }}">
+        <form action="<?php echo e($base_url); ?>/register" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <input type="hidden" name="csrf_token" value="<?php echo e($_SESSION['csrf_token']); ?>">
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
                 <input type="text" name="name" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" placeholder="John Doe">
@@ -34,8 +32,10 @@
         </form>
         
         <div class="mt-8 text-center text-slate-400">
-            Already have an account? <a href="{{ $base_url }}/login" class="text-blue-400 font-semibold">Sign In</a>
+            Already have an account? <a href="<?php echo e($base_url); ?>/login" class="text-blue-400 font-semibold">Sign In</a>
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/Club-Edge/App/Views/auth/register.blade.php ENDPATH**/ ?>

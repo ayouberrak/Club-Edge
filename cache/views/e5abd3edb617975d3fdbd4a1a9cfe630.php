@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="py-10 flex flex-col md:flex-row gap-8" x-data="{ activeTab: 'overview', showReviewModal: false, selectedEvent: null }">
     <!-- Sidebar -->
     <aside class="w-full md:w-64 space-y-4">
@@ -40,7 +38,7 @@
             <button class="w-full py-2 bg-slate-800 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-400 border border-slate-700">Change Club</button>
         </div>
             <div class="pt-4 border-t border-slate-800">
-                <a href="{{ $base_url }}/logout" class="group flex items-center justify-between w-full p-4 bg-slate-900/50 rounded-2xl border border-slate-800 hover:border-red-500/30 transition-all">
+                <a href="<?php echo e($base_url); ?>/logout" class="group flex items-center justify-between w-full p-4 bg-slate-900/50 rounded-2xl border border-slate-800 hover:border-red-500/30 transition-all">
                     <div class="flex items-center space-x-3">
                         <div class="p-2 bg-red-500/10 rounded-lg group-hover:bg-red-500/20 transition-colors">
                             <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,7 +68,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="glass p-6 rounded-2xl border border-slate-800 border-l-4 border-l-green-500 shadow-xl shadow-green-500/5">
                     <div class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">Current Club</div>
-                    <div class="text-2xl font-bold text-white">{{ $my_club['name'] }}</div>
+                    <div class="text-2xl font-bold text-white"><?php echo e($my_club['name']); ?></div>
                 </div>
                 <div class="glass p-6 rounded-2xl border border-slate-800 border-l-4 border-l-blue-500">
                     <div class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">Upcoming Events</div>
@@ -85,13 +83,13 @@
             <!-- My Club -->
             <div class="glass p-8 rounded-3xl border border-slate-800 relative overflow-hidden">
                 <div class="flex flex-col md:flex-row items-center gap-8 relative z-10">
-                    <img src="{{ $my_club['image'] }}" class="w-32 h-32 rounded-2xl object-cover shadow-2xl">
+                    <img src="<?php echo e($my_club['image']); ?>" class="w-32 h-32 rounded-2xl object-cover shadow-2xl">
                     <div class="flex-grow text-center md:text-left">
-                        <h2 class="text-3xl font-bold text-white mb-2">{{ $my_club['name'] }}</h2>
-                        <p class="text-slate-400 text-sm mb-6 max-w-md">You joined this club on <span class="text-green-400 font-bold">{{ date('M d, Y', strtotime($my_club['joined_at'])) }}</span>. You are an active member contributing to its growth.</p>
+                        <h2 class="text-3xl font-bold text-white mb-2"><?php echo e($my_club['name']); ?></h2>
+                        <p class="text-slate-400 text-sm mb-6 max-w-md">You joined this club on <span class="text-green-400 font-bold"><?php echo e(date('M d, Y', strtotime($my_club['joined_at']))); ?></span>. You are an active member contributing to its growth.</p>
                         <div class="flex flex-wrap justify-center md:justify-start gap-3">
                             <span class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-bold text-slate-300">Member #402</span>
-                            <span class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-bold text-slate-300">{{ $my_club['members_count'] }} Members</span>
+                            <span class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-bold text-slate-300"><?php echo e($my_club['members_count']); ?> Members</span>
                         </div>
                     </div>
                 </div>
@@ -105,34 +103,36 @@
         <div x-show="activeTab === 'events'" class="space-y-8 animate-fadeIn">
             <h2 class="text-3xl font-bold">Event Registrations</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                @foreach($registered_events as $event)
+                <?php $__currentLoopData = $registered_events; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $event): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="glass p-6 rounded-3xl border border-slate-800 relative group">
                     <div class="flex justify-between items-start mb-6">
                         <div class="w-12 h-12 bg-slate-800 rounded-xl flex flex-col items-center justify-center border border-slate-700">
                             <span class="text-[10px] font-black uppercase text-blue-500">FEB</span>
-                            <span class="text-lg font-bold text-white">{{ date('d', strtotime($event['date'])) }}</span>
+                            <span class="text-lg font-bold text-white"><?php echo e(date('d', strtotime($event['date']))); ?></span>
                         </div>
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase {{ $event['status'] === 'upcoming' ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20' : 'bg-slate-800 text-slate-500' }}">
-                            {{ $event['status'] }}
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase <?php echo e($event['status'] === 'upcoming' ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20' : 'bg-slate-800 text-slate-500'); ?>">
+                            <?php echo e($event['status']); ?>
+
                         </span>
                     </div>
-                    <h3 class="text-xl font-bold mb-2 group-hover:text-green-400 transition-colors">{{ $event['title'] }}</h3>
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-green-400 transition-colors"><?php echo e($event['title']); ?></h3>
                     <p class="text-slate-500 text-sm mb-6 flex items-center">
                         <svg class="w-4 h-4 mr-1 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                        {{ $event['location'] }}
+                        <?php echo e($event['location']); ?>
+
                     </p>
                     
-                    @if($event['status'] === 'completed' && !$event['reviewed'])
-                    <button @click="selectedEvent = '{{ $event['title'] }}'; showReviewModal = true" class="w-full py-4 bg-green-600 rounded-2xl font-black text-xs uppercase tracking-widest text-white shadow-lg shadow-green-600/20 hover:scale-[1.02] transition-all">
+                    <?php if($event['status'] === 'completed' && !$event['reviewed']): ?>
+                    <button @click="selectedEvent = '<?php echo e($event['title']); ?>'; showReviewModal = true" class="w-full py-4 bg-green-600 rounded-2xl font-black text-xs uppercase tracking-widest text-white shadow-lg shadow-green-600/20 hover:scale-[1.02] transition-all">
                         Rate & Review
                     </button>
-                    @elseif($event['status'] === 'upcoming')
+                    <?php elseif($event['status'] === 'upcoming'): ?>
                     <button @click="$dispatch('toast', { message: 'RSVP Cancelled!', type: 'error' })" class="w-full py-4 bg-slate-800 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-400 border border-slate-700 hover:bg-slate-700 transition-all">
                         Cancel RSVP
                     </button>
-                    @endif
+                    <?php endif; ?>
                 </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
 
@@ -140,21 +140,21 @@
         <div x-show="activeTab === 'articles'" class="space-y-8 animate-fadeIn">
             <h2 class="text-3xl font-bold text-white">Club Insights</h2>
             <div class="grid grid-cols-1 gap-6">
-                @foreach($past_articles as $article)
+                <?php $__currentLoopData = $past_articles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $article): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="glass p-8 rounded-3xl border border-slate-800 hover:border-emerald-500/40 transition-all cursor-pointer">
                     <div class="flex items-center space-x-2 text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-4">
-                        <span>{{ $article['club'] }}</span>
+                        <span><?php echo e($article['club']); ?></span>
                         <span>•</span>
-                        <span>{{ $article['date'] }}</span>
+                        <span><?php echo e($article['date']); ?></span>
                     </div>
-                    <h3 class="text-2xl font-bold text-white mb-4 leading-tight">{{ $article['title'] }}</h3>
+                    <h3 class="text-2xl font-bold text-white mb-4 leading-tight"><?php echo e($article['title']); ?></h3>
                     <p class="text-slate-400 text-sm mb-6 line-clamp-2">Discover how we are integrating advanced neural networks into our latest robotics project. Our team has spent weeks refining the algorithms for better balance...</p>
                     <div class="flex items-center text-emerald-400 text-xs font-bold uppercase tracking-widest">
                         Read Story 
                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                     </div>
                 </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
     </main>
@@ -198,4 +198,6 @@
         to { opacity: 1; transform: scale(1) translateY(0); }
     }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/Club-Edge/App/Views/dashboards/student.blade.php ENDPATH**/ ?>
