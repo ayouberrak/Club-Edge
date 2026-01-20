@@ -201,20 +201,83 @@
             <h2 class="text-3xl font-black text-white mb-2 leading-none uppercase tracking-tighter">Initialize Club</h2>
             <p class="text-slate-500 text-sm mb-10">Assign a new department to the establishment.</p>
             
-            <form class="space-y-6">
-                <div>
-                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-3">Club Designation</label>
-                    <input type="text" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:border-blue-500 focus:outline-none transition-all" placeholder="e.g. AI Research Center">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-3">Mission Statement</label>
-                    <textarea class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-5 py-4 text-white text-sm h-32 focus:border-blue-500 focus:outline-none transition-all placeholder:italic" placeholder="Define the club's main objective..."></textarea>
-                </div>
-                <div class="flex gap-4">
-                    <button type="button" @click="showClubModal = false" class="flex-1 py-4 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">Cancel</button>
-                    <button type="button" @click="showClubModal = false; $dispatch('toast', { message: 'Club initialized successfully', type: 'success' })" class="flex-[2] bg-blue-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-lg shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all">Confirm Activation</button>
-                </div>
-            </form>
+            <form class="space-y-4">
+    <div>
+        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Club Designation</label>
+        <input 
+            type="text" 
+            name="nom"
+            class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm" 
+            placeholder="e.g. AI Research Center"
+            required
+            maxlength="100">
+    </div>
+    
+    <div>
+        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Mission Statement</label>
+        <textarea 
+            name="description"
+            class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white text-sm h-24 focus:border-blue-500 focus:outline-none transition-all placeholder:italic resize-none" 
+            placeholder="Define the club's main objective..."></textarea>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Max Members</label>
+            <input 
+                type="number" 
+                name="max_membres"
+                value="8"
+                class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm" 
+                required
+                min="1">
+        </div>
+        
+        <div>
+            <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">President</label>
+            <select 
+                name="id_president"
+                class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all appearance-none cursor-pointer text-sm"
+                required>
+                <option value="" class="bg-slate-900">Select...</option>
+            </select>
+        </div>
+    </div>
+    
+    <div>
+        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Club Image</label>
+        <input 
+            type="file" 
+            name="image_url"
+            accept="image/*"
+            class="hidden" 
+            id="clubImageInput">
+        <label 
+            for="clubImageInput"
+            class="flex items-center justify-center w-full bg-slate-900/50 border-2 border-slate-800 border-dashed rounded-2xl px-4 py-5 text-slate-500 font-bold cursor-pointer hover:border-blue-500 transition-all group">
+            <div class="text-center">
+                <svg class="w-8 h-8 mx-auto mb-2 text-slate-600 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span class="text-xs uppercase tracking-wider">Upload Image</span>
+            </div>
+        </label>
+    </div>
+    
+    <div class="flex gap-3 pt-2">
+        <button 
+            type="button" 
+            @click="showClubModal = false" 
+            class="flex-1 py-3 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">
+            Cancel
+        </button>
+        <button 
+            type="submit"
+            class="flex-[2] bg-blue-600 py-3 rounded-2xl font-black text-white uppercase tracking-widest text-sm shadow-lg shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all">
+            Confirm Activation
+        </button>
+    </div>
+</form>
         </div>
     </div>
 </div>

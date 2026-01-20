@@ -33,4 +33,7 @@ $router->get('/dashboard/admin/students', [DashboardController::class, 'adminStu
 $router->get('/dashboard/admin/logs', [DashboardController::class, 'adminLogs']);
 $router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
 
+$router->post('/dashboard/creat/club', [DashboardController::class, 'createClub']);
+
+
 $router->dispatch();

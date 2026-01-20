@@ -1,5 +1,9 @@
 <?php $__env->startSection('content'); ?>
-<div class="py-10 flex flex-col lg:flex-row gap-8" x-data="{ activeSection: 'clubs', showClubModal: false, showStudentModal: false }">
+<div class="py-10 flex flex-col lg:flex-row gap-8" x-data="{ 
+    activeSection: 'clubs', 
+    showClubModal: false, 
+    showStudentModal: false
+}">
     <!-- Admin Sidebar -->
     <aside class="w-full lg:w-72 space-y-6">
         <div class="glass p-6 rounded-3xl border border-blue-500/20">
@@ -80,25 +84,30 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <?php $__currentLoopData = $clubs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $club): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="glass p-6 rounded-3xl border border-slate-800 relative overflow-hidden group hover:border-blue-500/40 transition-all">
+                <div class="glass p-6 rounded-3xl border border-slate-800 relative overflow-hidden group hover:border-blue-500/40 transition-all cursor-pointer" onclick="window.location.href='<?php echo e($base_url); ?>/dashboard/admin/club/<?php echo e($club['id']); ?>'">
                     <div class="flex justify-between items-start mb-8 relative z-10">
                         <div>
                             <h3 class="text-xl font-bold leading-tight group-hover:text-blue-400 transition-colors"><?php echo e($club['name']); ?></h3>
                             <p class="text-xs text-slate-500 mt-1 uppercase tracking-tighter">President: <span class="text-slate-300 font-bold"><?php echo e($club['president']); ?></span></p>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex gap-2" @click.stop>
                             <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:text-white transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
                             <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-red-600 hover:text-white transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                         </div>
                     </div>
                     
-                    <div class="space-y-2 relative z-10">
-                        <div class="flex justify-between text-xs font-bold uppercase tracking-widest text-slate-500">
-                            <span>Members Capacity</span>
-                            <span class="<?php echo e($club['members'] >= $club['capacity'] ? 'text-red-400' : 'text-blue-400'); ?>"><?php echo e($club['members']); ?> / <?php echo e($club['capacity']); ?></span>
+                    <div class="space-y-4 relative z-10">
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold uppercase tracking-widest text-slate-500">
+                                <span>Members Capacity</span>
+                                <span class="<?php echo e($club['members'] >= $club['capacity'] ? 'text-red-400' : 'text-blue-400'); ?>"><?php echo e($club['members']); ?> / <?php echo e($club['capacity']); ?></span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden flex">
+                                <div class="h-full <?php echo e($club['status'] === 'full' ? 'bg-red-500' : 'bg-blue-500'); ?>" style="width: <?php echo e(($club['members'] / $club['capacity']) * 100); ?>%"></div>
+                            </div>
                         </div>
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden flex">
-                            <div class="h-full <?php echo e($club['status'] === 'full' ? 'bg-red-500' : 'bg-blue-500'); ?>" style="width: <?php echo e(($club['members'] / $club['capacity']) * 100); ?>%"></div>
+                        <div class="flex justify-end">
+                            <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest group-hover:translate-x-1 transition-transform">View Full Profile →</span>
                         </div>
                     </div>
                     
@@ -187,25 +196,88 @@
     </main>
 
     <!-- Modal Club Creation -->
-    <div x-show="showClubModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md" x-cloak>
+    <div x-show="showClubModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md" x-cloak x-transition>
         <div class="glass w-full max-w-lg p-10 rounded-[2.5rem] border border-blue-500/30 shadow-[0_0_50px_rgba(37,99,235,0.1)]" @click.away="showClubModal = false">
             <h2 class="text-3xl font-black text-white mb-2 leading-none uppercase tracking-tighter">Initialize Club</h2>
             <p class="text-slate-500 text-sm mb-10">Assign a new department to the establishment.</p>
             
-            <form class="space-y-6">
-                <div>
-                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-3">Club Designation</label>
-                    <input type="text" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:border-blue-500 focus:outline-none transition-all" placeholder="e.g. AI Research Center">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-3">Mission Statement</label>
-                    <textarea class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-5 py-4 text-white text-sm h-32 focus:border-blue-500 focus:outline-none transition-all placeholder:italic" placeholder="Define the club's main objective..."></textarea>
-                </div>
-                <div class="flex gap-4">
-                    <button type="button" @click="showClubModal = false" class="flex-1 py-4 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">Cancel</button>
-                    <button type="button" @click="showClubModal = false; $dispatch('toast', { message: 'Club initialized successfully', type: 'success' })" class="flex-[2] bg-blue-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-lg shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all">Confirm Activation</button>
-                </div>
-            </form>
+            <form class="space-y-4">
+    <div>
+        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Club Designation</label>
+        <input 
+            type="text" 
+            name="nom"
+            class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm" 
+            placeholder="e.g. AI Research Center"
+            required
+            maxlength="100">
+    </div>
+    
+    <div>
+        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Mission Statement</label>
+        <textarea 
+            name="description"
+            class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white text-sm h-24 focus:border-blue-500 focus:outline-none transition-all placeholder:italic resize-none" 
+            placeholder="Define the club's main objective..."></textarea>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Max Members</label>
+            <input 
+                type="number" 
+                name="max_membres"
+                value="8"
+                class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm" 
+                required
+                min="1">
+        </div>
+        
+        <div>
+            <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">President</label>
+            <select 
+                name="id_president"
+                class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all appearance-none cursor-pointer text-sm"
+                required>
+                <option value="" class="bg-slate-900">Select...</option>
+            </select>
+        </div>
+    </div>
+    
+    <div>
+        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Club Image</label>
+        <input 
+            type="file" 
+            name="image_url"
+            accept="image/*"
+            class="hidden" 
+            id="clubImageInput">
+        <label 
+            for="clubImageInput"
+            class="flex items-center justify-center w-full bg-slate-900/50 border-2 border-slate-800 border-dashed rounded-2xl px-4 py-5 text-slate-500 font-bold cursor-pointer hover:border-blue-500 transition-all group">
+            <div class="text-center">
+                <svg class="w-8 h-8 mx-auto mb-2 text-slate-600 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span class="text-xs uppercase tracking-wider">Upload Image</span>
+            </div>
+        </label>
+    </div>
+    
+    <div class="flex gap-3 pt-2">
+        <button 
+            type="button" 
+            @click="showClubModal = false" 
+            class="flex-1 py-3 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">
+            Cancel
+        </button>
+        <button 
+            type="submit"
+            class="flex-[2] bg-blue-600 py-3 rounded-2xl font-black text-white uppercase tracking-widest text-sm shadow-lg shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all">
+            Confirm Activation
+        </button>
+    </div>
+</form>
         </div>
     </div>
 </div>

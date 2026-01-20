@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Services\AdminService;
 use Core\Controller;
 
 class DashboardController extends Controller
@@ -174,4 +175,23 @@ class DashboardController extends Controller
             ]
         ]);
     }
+
+    public function createClub() {
+        $clubInfo = [
+            'nom' => $_POST['nom'] , 
+            'description' => $_POST['description'] , 
+            'max_membres' => $_POST['max_membres'] , 
+            'image_url' => $_FILES['image_url'] 
+        ] ;
+
+        if(!empty($_POST['id_president'])) {
+            $clubInfo [] = ['id_president' => $_POST['id_president']] ; 
+        } 
+
+        $adminServ = new AdminService() ; 
+        $adminServ -> createClub($clubInfo) ;
+
+    }
+
+
 }
