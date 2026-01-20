@@ -1,6 +1,6 @@
 <?php
 
-namespace   App\Services;
+namespace  App\Services;
 
 use App\Repository\ArticleRepository;
 use App\Models\Article;
@@ -11,11 +11,12 @@ class ArticleServices
 
     public function __construct()
     {
-        $this->articleRepository = new ArticleRepository();
+        $this->articleRepository = new ArticleRepository(); 
     }
 
-    public function createArticle(array $data): bool
+    public function createArticle(array $data ,int $id_event ): bool
     {
+        $data['id_event'] = $id_event;
         $article = Article::arrayToArticle($data);
         return $this->articleRepository->createArticle($article);
     }

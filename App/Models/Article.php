@@ -45,10 +45,10 @@ class Article
     public static function arrayToArticle($data): Article
     {
         return new Article(
-            $data['id_article'],
+            $data['id_article'] ? null : $data['id_article'],
             $data['contenu'],
             $data['id_event'],
-            $data['image_article'],
+            $data['articleImage'],
         );
     }
 }

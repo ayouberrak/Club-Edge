@@ -15,9 +15,9 @@ class ArticlesController extends Controller
         $this->articleServices = new ArticleServices();
     }
 
-    public function createArticle($data)
+    public function createArticle($data, $id_event)
     {
-        $success = $this->articleServices->createArticle($data);
+        $success = $this->articleServices->createArticle($data, $id_event);
         if ($success) {
             header('Location: ' . $this->view->shared('base_url') . '/articles/success');
         } else {
