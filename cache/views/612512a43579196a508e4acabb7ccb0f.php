@@ -274,4 +274,4 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>
-<?php /**PATH C:\xampp\htdocs\Club Edge\app\Views/layouts/main.blade.php ENDPATH**/ ?>
+<?php /**PATH /var/www/html/Club-Edge/App/Views/layouts/main.blade.php ENDPATH**/ ?>
