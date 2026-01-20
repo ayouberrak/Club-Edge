@@ -35,7 +35,7 @@ class Database
             
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            echo "Connexion à la base de données réussie.";
+            // echo "Connexion à la base de données réussie.";
 
         } catch (PDOException $e) {
             throw new Exception("Erreur de connexion à la base de données.");
