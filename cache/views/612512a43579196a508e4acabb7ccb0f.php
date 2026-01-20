@@ -227,9 +227,44 @@
                 </nav>
 
                 <div class="flex items-center space-x-8">
+                    <?php if(isset($_SESSION['user_id'])): ?>
+                        <div class="flex items-center space-x-6">
+                            <?php
+                                $dashboardUrl = $base_url . '/dashboard';
+                                if($_SESSION['user_role'] === 'president') {
+                                    $dashboardUrl = $base_url . '/dashboard/president';
+                                } elseif ($_SESSION['user_role'] === 'admin') {
+                                    $dashboardUrl = $base_url . '/dashboard/admin';
+                                }
+                            ?>
+                            <a href="<?php echo e($dashboardUrl); ?>" class="flex items-center space-x-3 group bg-indigo-500/5 hover:bg-indigo-500/10 px-4 py-2 rounded-2xl border border-indigo-500/10 transition-all">
+                                <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-black text-white uppercase tracking-wider"><?php echo e($_SESSION['user_nom'] ?? 'Account'); ?></span>
+                                    <span class="text-[8px] text-indigo-400 font-bold uppercase tracking-widest">Dashboard</span>
+                                </div>
+                            </a>
+
+                            <a href="<?php echo e($base_url); ?>/logout" class="text-slate-500 hover:text-red-400 transition-colors p-2" title="Sign Out">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4-4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <a href="<?php echo e($base_url); ?>/login" class="text-[11px] font-bold text-slate-400 hover:text-white uppercase tracking-[0.3em] transition-all">Portal</a>
+                        <a href="<?php echo e($base_url); ?>/register" class="btn-gradient px-10 py-5 rounded-[1.8rem] text-[11px] font-black text-white uppercase tracking-[0.3em] shadow-xl shadow-indigo-600/20">Join Orbit</a>
+                    <?php endif; ?>
+                </div>
+
+                <!-- <div class="flex items-center space-x-8">
                     <a href="<?php echo e($base_url); ?>/login" class="text-[11px] font-bold text-slate-400 hover:text-white uppercase tracking-[0.3em] transition-all">Portal</a>
                     <a href="<?php echo e($base_url); ?>/register" class="btn-gradient px-10 py-5 rounded-[1.8rem] text-[11px] font-black text-white uppercase tracking-[0.3em] shadow-xl shadow-indigo-600/20">Join Orbit</a>
-                </div>
+                </div> -->
             </div>
         </div>
     </header>

@@ -37,6 +37,13 @@ class DashboardController extends Controller
 
     public function president()
     {
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'president') {
+            header('Location: '. $this->view->shared('base_url') . '/dashboard');
+            exit;
+        }
+
         // President Dashboard Data (Manages Robotics Club)
         return $this->render('dashboards.president', [
             'club' => [
@@ -64,6 +71,14 @@ class DashboardController extends Controller
 
     public function admin()
     {
+
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'admin') {
+            header('Location: '. $this->view->shared('base_url') . '/dashboard');
+            exit;
+        }
+    
         // Admin Dashboard Data
         return $this->render('dashboards.admin', [
             'stats' => [

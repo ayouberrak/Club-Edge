@@ -20,7 +20,6 @@ class AuthController extends Controller
 
         $success = ($_GET['registered'] ?? '') === 'success' ? 'Account created! Please sign in.' : null;
 
-
         return $this->render('auth.login', ['success' => $success]);
     }
 
@@ -56,7 +55,20 @@ class AuthController extends Controller
             $_SESSION['user_nom'] = $user['nom'];
             $_SESSION['user_role'] = $user['role'];
 
-            header('Location: ' . $this->view->shared('base_url') . '/dashboard');
+            $baseUrl =  $this->view->shared('base_url');
+            
+            switch ($_SESSION['user_role']){ 
+                case 'admin':
+                    header('Location: ' . $baseUrl . '/dashboard/admin');
+                    break;
+                case 'president':
+                    header('Location: ' . $baseUrl . '/dashboard/president');
+                    break;
+                case 'etudiant':
+                default: 
+                    header('Location:' .$baseUrl . '/dashboard');
+                    break;
+            }
             exit;
         }
 
