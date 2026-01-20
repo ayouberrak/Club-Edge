@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use Core\Controller;
+use Config\Database;
+use PDO;
 
 class AuthController extends Controller
 {
@@ -16,7 +18,7 @@ class AuthController extends Controller
         return $this->render('auth.register');
     }
 
-      public function postLogin($data)
+    public function postLogin($data)
     {
         // Mock login
         header('Location: ' . $this->view->shared('base_url') . '/dashboard');
