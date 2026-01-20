@@ -15,7 +15,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 $container = new Container();
 $events = new Dispatcher($container);
 
-$viewsPath = __DIR__ . '/../app/Views';
+$viewsPath = __DIR__ . '/../App/Views';
 $cachePath = __DIR__ . '/../cache/views';
 
 $filesystem = new Filesystem();

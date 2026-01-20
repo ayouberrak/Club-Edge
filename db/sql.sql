@@ -76,3 +76,4 @@ CREATE TABLE articles (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_event_article FOREIGN KEY (id_event) REFERENCES events(id_event) ON DELETE CASCADE
 );
+
