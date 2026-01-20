@@ -29,6 +29,7 @@ CREATE TABLE club_members (
     CONSTRAINT fk_user_member FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
     CONSTRAINT fk_club_member FOREIGN KEY (id_club) REFERENCES clubs(id_club) ON DELETE CASCADE
 );
+
 -- 6. Events Table
 CREATE TABLE events (
     id_event SERIAL PRIMARY KEY,

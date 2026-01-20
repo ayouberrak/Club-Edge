@@ -48,16 +48,12 @@ class EventController extends Controller
            
             header('Location: /events?success=1');
         } catch (\Exception $e) {
-            // Affichage de l'erreur (ex: pas président ou date passée)
             return $this->render('events/create', [
                 'error' => $e->getMessage()
             ]);
         }
     }
 
-    /**
-     * Supprimer un événement
-     */
     public function delete($id)
     {
         if ($this->eventService->cancelEvent((int)$id)) {
