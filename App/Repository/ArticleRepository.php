@@ -51,5 +51,25 @@ class ArticleRepository
         return null;
     }
 
+    public function getArticlebyClub(int $id_club): ?array
+    {
+        $sql = "SELECT a.* FROM articles a
+                JOIN events e ON a.id_event = e.id_event
+                WHERE e.id_club = :id_club";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id_club', $id_club);
+        $stmt->execute();
+        $articlesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $articles = [];
+        foreach ($articlesData as $article) {
+            $articles[] = new Article(
+                $article['id_article'],
+                $article['contenu'],
+                $article['id_event'],
+                $article['image_article'],
+            );
+        }
+        return $articles;
+    }
     
 }
