@@ -14,9 +14,9 @@ class ArticleServices
         $this->articleRepository = new ArticleRepository(); 
     }
 
-    public function createArticle(array $data ,int $id_event ): bool
+    public function createArticle(array $data ): bool
     {
-        $data['id_event'] = $id_event;
+        // $data['id_event'] = 10 ; 
         $article = Article::arrayToArticle($data);
         return $this->articleRepository->createArticle($article);
     }
@@ -25,4 +25,10 @@ class ArticleServices
     {
         return $this->articleRepository->getArticleByIdEvent($id_event);
     }
+
+    public function getArticlesByClub(int $id_club): ?array
+    {
+        return $this->articleRepository->getArticlebyClub($id_club);
+    }
+
 }
