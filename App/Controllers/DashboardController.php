@@ -8,6 +8,13 @@ class DashboardController extends Controller
 {
     public function index()
     {
+       if(session_status() === PHP_SESSION_NONE) session_start();
+
+        if(!isset($_SESSION['user_id'])) {
+            header('Location: ' . $this->view->shared('base_url') . '/login');
+            exit;
+        }
+
         // Student Dashboard Data
         return $this->render('dashboards.student', [
             'my_club' => [

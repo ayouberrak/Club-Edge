@@ -7,6 +7,7 @@
         </div>
         
         <form action="<?php echo e($base_url); ?>/register" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <input type="hidden" name="csrf_token" value="<?php echo e($_SESSION['csrf_token']); ?>">
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
                 <input type="text" name="name" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" placeholder="John Doe">

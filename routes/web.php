@@ -12,6 +12,7 @@ $router = new Router();
 $router->get('/', [HomeController::class, 'index']);
 $router->get('/login', [AuthController::class, 'login']);
 $router->get('/register', [AuthController::class, 'register']);
+$router->post('/register', [AuthController::class, 'postRegister']);
 $router->post('/login', [AuthController::class, 'postLogin']);
 $router->get('/logout', [AuthController::class, 'logout']);
 
