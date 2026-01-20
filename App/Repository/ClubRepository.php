@@ -1,5 +1,7 @@
 <?php 
 
+namespace App\Repository;
+
 use App\Repository\GenericRepository;
 use Config\Database;
 

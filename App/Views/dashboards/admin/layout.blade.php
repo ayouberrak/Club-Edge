@@ -107,7 +107,7 @@
                 <h2 class="text-3xl font-black text-white mb-2 leading-none uppercase tracking-tighter">Initialize Club</h2>
                 <p class="text-slate-500 text-sm mb-10">Assign a new department to the establishment.</p>
 
-                <form class="space-y-4" method="post" action="creat/club">
+                <form class="space-y-4" method="post" action="creat/club" enctype="multipart/form-data" >
                     <div>
                         <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Club
                             Designation</label>
@@ -138,7 +138,7 @@
                                 class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">President</label>
                             <select name="id_president"
                                 class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all appearance-none cursor-pointer text-sm"
-                                required>
+                                >
                                 <option value="" class="bg-slate-900">Select...</option>
                             </select>
                         </div>

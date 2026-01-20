@@ -191,6 +191,8 @@ class DashboardController extends Controller
         $adminServ = new AdminService() ; 
         $adminServ -> createClub($clubInfo) ;
 
+        header('Location: admin'); 
+
     }
 
 
