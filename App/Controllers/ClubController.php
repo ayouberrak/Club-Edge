@@ -2,44 +2,17 @@
 
 namespace App\Controllers;
 
+use App\Models\Event;
 use App\Repositories\EventRepository;
 use Config\Database;
 use Core\Controller;
-use PSpell\Config;
 class ClubController extends Controller
 {
-    public function testCreateEvent()
-{
-    try {
-        $db = Database::getInstance()->getConnection();
-        $eventRepo = new EventRepository($db);
-
-        // 1. Création de l'objet Event avec des données de test
-        // On suppose que l'id_club 1 existe déjà dans votre table 'clubs'
-        $newEvent = new \App\Models\Event(null, "Atelier Robotique 2026", "2026-03-15 10:00:00", 1);
-        $newEvent->setDescription("Apprendre les bases de la programmation Arduino.");
-        $newEvent->setLieu("Salle de conférence A");
-        $newEvent->setImageEvent("robot.jpg");
-
-        // 2. Appel de la méthode create du Repository
-        $success = $eventRepo->create($newEvent);
-
-        if ($success) {
-            echo "Succès : L'événement a été ajouté à la base de données !";
-        } else {
-            echo "Erreur : L'insertion a échoué.";
-        }
-
-    } catch (\Exception $e) {
-        echo "Exception capturée : " . $e->getMessage();
-    }
-}
     public function testClubDetails()
 {
     $db = Database::getInstance()->getConnection();
     $eventRepo = new EventRepository($db);
 
-    // Récupération des events (statique id 1)
     $events = $eventRepo->findByClub();
 
     return $this->render('dashboards.admin.club_details', [

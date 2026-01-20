@@ -68,18 +68,59 @@
 
     <!-- Modals (Common for all president pages) -->
     
-    <!-- New Event Modal -->
-    <div x-show="showEventModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md" x-cloak x-transition>
-        <div class="glass w-full max-w-xl p-10 rounded-[2.5rem] border border-white/10" @click.away="showEventModal = false">
-            <h2 class="text-3xl font-black mb-10 uppercase tracking-tighter">Schedule <span class="text-indigo-500">Event</span></h2>
-            <form class="space-y-6">
-                <input type="text" class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none" placeholder="Event Name">
-                <input type="date" class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none">
-                <textarea class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none h-32" placeholder="Description"></textarea>
-                <button type="button" @click="showEventModal = false; $dispatch('toast', { message: 'Event successfully created!', type: 'success' })" class="w-full btn-gradient py-5 rounded-2xl font-black text-lg shadow-2xl shadow-indigo-600/20">PUBLISH EVENT</button>
+    <div x-show="showEventModal" 
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-slate-950/90 backdrop-blur-md" 
+     x-cloak x-transition>
+     
+    <div class="glass w-full max-w-xl max-h-[90vh] flex flex-col p-8 md:p-10 rounded-[2.5rem] border border-white/10 relative shadow-2xl" 
+         @click.away="showEventModal = false">
+        
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-black uppercase tracking-tighter">Schedule <span class="text-indigo-500">Event</span></h2>
+            <button @click="showEventModal = false" class="text-slate-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <div class="overflow-y-auto pr-2 custom-scrollbar">
+            <form action="{{ $base_url }}/events/store" method="POST" class="space-y-6">
+                <input type="hidden" name="id_club" value="1">
+
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-2">Event Title</label>
+                    <input type="text" name="titre" required
+                        class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 mt-1" 
+                        placeholder="Ex: Robotics Workshop">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-2">Date & Time</label>
+                        <input type="datetime-local" name="date_event" required
+                            class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none mt-1">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-2">Location</label>
+                        <input type="text" name="lieu" placeholder="Lab 101"
+                            class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none mt-1">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-2">Description</label>
+                    <textarea name="description"
+                        class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none h-32 mt-1" 
+                        placeholder="What is this event about?"></textarea>
+                </div>
+                
+                <button type="submit" 
+                    class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-5 rounded-2xl font-black text-lg shadow-2xl shadow-indigo-600/20 uppercase tracking-widest transition-all active:scale-95">
+                    Publish Event
+                </button>
             </form>
         </div>
     </div>
+</div>
 
     <!-- Article Modal -->
     <div x-show="showArticleModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md" x-cloak x-transition>

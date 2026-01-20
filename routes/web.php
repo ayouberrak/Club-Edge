@@ -5,6 +5,7 @@ use App\Controllers\HomeController;
 use App\Controllers\AuthController;
 use App\Controllers\ClubController;
 use App\Controllers\DashboardController;
+use App\Controllers\EventController;
 
 $router = new Router();
 
@@ -26,12 +27,14 @@ $router->get('/dashboard/articles', [DashboardController::class, 'studentArticle
 
 $router->get('/dashboard/president', [DashboardController::class, 'president']); // President Members
 $router->get('/dashboard/president/events', [DashboardController::class, 'presidentEvents']);
+/* creer un evenement */
+$router->post('/events/store', [EventController::class, 'store']);
 $router->get('/dashboard/president/articles', [DashboardController::class, 'presidentArticles']);
 
 $router->get('/dashboard/admin', [DashboardController::class, 'admin']); // Admin Clubs
 $router->get('/dashboard/admin/students', [DashboardController::class, 'adminStudents']);
 $router->get('/dashboard/admin/logs', [DashboardController::class, 'adminLogs']);
 $router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
+/* test recuperation detaills de club */
 $router->get('/dashboard/admin/club', [ClubController::class, 'testClubDetails']);
-$router->get('/test-create-event', [App\Controllers\ClubController::class, 'testCreateEvent']);
 $router->dispatch();

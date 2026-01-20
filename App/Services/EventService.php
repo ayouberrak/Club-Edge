@@ -15,7 +15,7 @@ class EventService
     }
 
 
-    public function organizeEvent(Event $event, int $userRole): bool
+    public function organizeEvent(Event $event, string $userRole): bool
     {
         if ($userRole !== 'president' && $userRole !== 'admin') {
             throw new \Exception("Seul un président ou un admin peut créer un événement.");

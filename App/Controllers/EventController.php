@@ -31,26 +31,36 @@ class EventController extends Controller
 
     public function store()
     {
-        $titre = $_POST['titre'] ?? '';
-        $date = $_POST['date_event'] ?? '';
-        $id_club = (int)$_POST['id_club'];
-        
-       
-        $event = new Event(null, $titre, $date, $id_club);
-        $event->setDescription($_POST['description'] ?? null);
-        $event->setLieu($_POST['lieu'] ?? null);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // 1. Récupération des données du formulaire
+            $titre = $_POST['titre'] ?? '';
+            $description = $_POST['description'] ?? '';
+            $date_event = $_POST['date_event'] ?? '';
+            $lieu = $_POST['lieu'] ?? '';
+            $id_club = isset($_POST['id_club']) ? (int)$_POST['id_club'] : 0;
 
-        
-        $userRole = $_SESSION['user_role'] ?? 'etudiant';
+            
+            $event = new Event(null, $titre, $date_event, $id_club);
+            $event->setDescription($description);
+            $event->setLieu($lieu);
+            $event->setImageEvent(null); 
 
-        try {
-            $this->eventService->organizeEvent($event, $userRole);
            
-            header('Location: /events?success=1');
-        } catch (\Exception $e) {
-            return $this->render('events/create', [
-                'error' => $e->getMessage()
-            ]);
+            $userRole = $_SESSION['user_role'] ?? 'president'; 
+
+            try {
+                // 4. Appel au Service pour la logique métier et l'insertion
+                $success = $this->eventService->organizeEvent($event, $userRole);
+
+                if ($success) {
+                    // Redirection vers la page précédente avec succès
+                    header("Location: " . $_SERVER['HTTP_REFERER'] . "?success=event_created");
+                    exit();
+                }
+            } catch (\Exception $e) {
+                // En cas d'erreur (ex: date passée), on renvoie vers le formulaire avec l'erreur
+                die("Erreur lors de la création : " . $e->getMessage());
+            }
         }
     }
 
