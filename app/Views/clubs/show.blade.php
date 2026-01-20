@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="space-y-12 py-10" x-data="{ rsvpDone: false }">
-    <!-- Club Header -->
     <div class="glass p-8 md:p-16 rounded-[3rem] border border-slate-700 overflow-hidden relative group">
         <div class="absolute top-0 right-0 w-1/2 h-full opacity-30 pointer-events-none group-hover:scale-110 transition-transform duration-700">
             <img src="{{ $club['image'] }}" class="w-full h-full object-cover">

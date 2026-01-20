@@ -7,7 +7,7 @@ class Event
     private ?int $id_event;
     private string $titre;
     private ?string $description;
-    private string $date_event; // Format Y-m-d H:i:s
+    private string $date_event; 
     private ?string $lieu;
     private ?string $image_event;
     private int $id_club;
@@ -20,7 +20,6 @@ class Event
         $this->id_club = $id_club;
     }
 
-    // Getters
     public function getIdEvent(): ?int { return $this->id_event; }
     public function getTitre(): string { return $this->titre; }
     public function getDescription(): ?string { return $this->description; }
@@ -29,7 +28,7 @@ class Event
     public function getImageEvent(): ?string { return $this->image_event; }
     public function getIdClub(): int { return $this->id_club; }
 
-    // Setters
+
     public function setTitre(string $t): void { $this->titre = $t; }
     public function setDescription(?string $d): void { $this->description = $d; }
     public function setDateEvent(string $date): void { $this->date_event = $date; }

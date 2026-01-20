@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Services;
+
+use App\Repositories\EventRepository;
+use App\Models\Event;
+
+class EventService
+{
+    private EventRepository $eventRepository;
+
+    public function __construct(EventRepository $eventRepository)
+    {
+        $this->eventRepository = $eventRepository;
+    }
+
+
+    public function organizeEvent(Event $event, int $userRole): bool
+    {
+        if ($userRole !== 'president' && $userRole !== 'admin') {
+            throw new \Exception("Seul un président ou un admin peut créer un événement.");
+        }
+
+    
+        if (strtotime($event->getDateEvent()) < time()) {
+            throw new \Exception("La date de l'événement ne peut pas être dans le passé.");
+        }
+
+        return $this->eventRepository->create($event);
+    }
+
+    public function getAllEvents(): array
+    {
+        return $this->eventRepository->findAll();
+    }
+
+    public function cancelEvent(int $id_event): bool
+    {
+        return $this->eventRepository->delete($id_event);
+    }
+}
