@@ -8,10 +8,10 @@ use PDO;
 class EventRepository
 {
     private PDO $db;
-
-    public function __construct(PDO $db)
+/* // turbo */
+    public function __construct()
     {
-        $this->db = $db;
+        $this->db = \Config\Database::getInstance()->getConnection();
     }
 
 
