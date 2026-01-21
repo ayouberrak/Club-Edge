@@ -8,14 +8,10 @@ use Core\Controller;
 
 class HomeController extends Controller
 {
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
-
-        $this->db = Database::getInstance()->getConnection();
-        // if(session_status() == PHP_SESSION_NONE) session_start();
     }
 
 
@@ -23,7 +19,7 @@ class HomeController extends Controller
     {
         if(session_status() === PHP_SESSION_NONE ) session_start();
 
-        $repo = new ClubRepository($this->db);
+        $repo = new ClubRepository();
         $clubs = $repo->allClubs();
 
         return $this->render('home', [
