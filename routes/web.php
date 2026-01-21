@@ -26,7 +26,7 @@ $router->get('/dashboard/events', [DashboardController::class, 'studentEvents'])
 $router->get('/dashboard/articles', [DashboardController::class, 'studentArticles']);
 
 $router->get('/dashboard/president', [DashboardController::class, 'president']); // President Members
-$router->get('/dashboard/president/events', [DashboardController::class, 'presidentEvents']);
+$router->get('/dashboard/president/events', [EventController::class, 'index']);
 /* creer un evenement */
 $router->post('/events/store', [EventController::class, 'store']);
 $router->get('/dashboard/president/articles', [DashboardController::class, 'presidentArticles']);

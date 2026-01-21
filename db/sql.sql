@@ -1,4 +1,4 @@
--- 2. Define Roles
+/* -- 2. Define Roles
 CREATE TYPE user_role AS ENUM ('etudiant', 'president', 'admin');
 
 -- 3. Users Table (Base for all actors)
@@ -110,5 +110,6 @@ INSERT INTO avis (note, commentaire, id_user, id_event) VALUES
 INSERT INTO articles (contenu, image_article, id_event) VALUES 
 ('Le Hackathon 2026 fut un succès total...', 'news_hack.jpg', 1),
 ('Retour sur les plus belles oeuvres de l''expo...', 'news_art.jpg', 2);
-
- SELECT * FROM users
+ */
+INSERT INTO events (titre, description, date_event, lieu, image_event, id_club) VALUES 
+('Hackathon 2026', '24h de code', '2025-05-15 09:00:00', 'Salle 101', 'hack.jpg', 1)

@@ -6,6 +6,7 @@ use Core\Controller;
 
 class DashboardController extends Controller
 {
+    
     public function index()
     {
         return $this->render('dashboards.student.index', [

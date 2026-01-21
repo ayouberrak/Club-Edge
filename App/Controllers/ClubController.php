@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Event;
-use App\Repositories\EventRepository;
+use App\Repository\EventRepository;
 use Config\Database;
 use Core\Controller;
 class ClubController extends Controller

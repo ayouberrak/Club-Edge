@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repository;
 
 use App\Models\Event;
 use PDO;
@@ -33,8 +33,22 @@ class EventRepository
 
     public function findAll(): array
     {
-        $stmt = $this->db->query("SELECT * FROM events ORDER BY date_event DESC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT 
+                id_event as id,
+                titre as title, 
+                date_event as date, 
+                lieu as location,
+                CASE 
+                    WHEN image_event IS NOT NULL AND image_event != '' 
+                    THEN CONCAT('/upload/imageevent/', image_event)
+                    ELSE 'https://images.unsplash.com/photo-1540575861501-7ad06763821d' 
+                END as image,
+                (SELECT COUNT(*) FROM participations WHERE id_event = events.id_event) as participants
+            FROM events 
+            ORDER BY date_event DESC";
+
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function findByClub(): array

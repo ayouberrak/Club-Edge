@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Repositories\EventRepository;
+
 use App\Models\Event;
+use App\Repository\EventRepository;
 
 class EventService
 {
-    private EventRepository $eventRepository;
+    private  EventRepository $eventRepository;
 
     public function __construct(EventRepository $eventRepository)
     {
