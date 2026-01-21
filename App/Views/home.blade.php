@@ -92,7 +92,7 @@
                     <!-- Established Badge -->
                     <div class="absolute top-6 right-6">
                         <div class="px-4 py-2 glass rounded-2xl border-white/10">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Est. {{ $club['created_at'] }}</span>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Est. {{ $club['created_at'] ?? '2024' }}</span>
                         </div>
                     </div>
                 </div>
