@@ -4,13 +4,22 @@ namespace App\Repository;
 
 use PDO;
 
-class ClubRepository
+class ClubRepository extends GenericRepository
 {
-    private $db;
-
-    public function __construct($db)
+    public function getTablename()
     {
-        $this->db = $db;
+        return 'clubs';
+    }
+    protected $db;
+/* // turbo */
+    public function __construct()
+    {
+        $this->db = \Config\Database::getInstance()->getConnection();
+    }
+
+    public function getCountClubs() {
+        $stmt = $this->db->query("SELECT COUNT(*) FROM clubs");
+        return (int)$stmt->fetchColumn();
     }
 
     public function allClubs() {
@@ -34,7 +43,7 @@ class ClubRepository
 
     public function findClub($clubId) {
         $stmt = $this->db->prepare("SELECT c.*, 
-                                    u.nom as president
+                                    u.nom as president, 
                                     COALESCE(
                                         (SELECT ROUND(AVG(a.note), 1)
                                          FROM avis a 
@@ -86,4 +95,10 @@ class ClubRepository
             return false;
         }
     } 
+
+
+    public function getPotentialPresidents() {
+        $stmt = $this->db->query("SELECT id_user, nom FROM users WHERE role != 'admin'");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
