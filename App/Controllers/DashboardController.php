@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Services\AdminService;
+use App\Services\ClubService;
 use Core\Controller;
 
 class DashboardController extends Controller
@@ -104,6 +105,13 @@ class DashboardController extends Controller
             exit;
         }
     
+        $clubsService = new ClubService () ; 
+
+        $clubs = $clubsService -> getallclub () ;
+
+        // var_dump($clubs) ; 
+        // exit ; 
+    
         // Admin Dashboard Data
         return $this->render('dashboards.admin', [
             'stats' => [
@@ -112,14 +120,7 @@ class DashboardController extends Controller
                 'pending_reviews' => 14,
                 'active_events' => 8
             ],
-            'clubs' => [
-                ['id' => 1, 'name' => 'Robotics Club', 'president' => 'Anas Errak', 'members' => 5, 'capacity' => 8, 'status' => 'active'],
-                ['id' => 2, 'name' => 'Music Club', 'president' => 'Mehdi Ray', 'members' => 8, 'capacity' => 8, 'status' => 'full'],
-                ['id' => 3, 'name' => 'Sport Club', 'president' => 'Youssef Zen', 'members' => 4, 'capacity' => 8, 'status' => 'active'],
-                ['id' => 4, 'name' => 'Chess Club', 'president' => 'Sarah Smith', 'members' => 6, 'capacity' => 8, 'status' => 'active'],
-                ['id' => 5, 'name' => 'Art Club', 'president' => 'Ines Ber', 'members' => 3, 'capacity' => 8, 'status' => 'low'],
-                ['id' => 6, 'name' => 'Coding Club', 'president' => 'Omar Far', 'members' => 7, 'capacity' => 8, 'status' => 'active'],
-            ]
+            'clubs' => $clubs
         ]);
     }
 
@@ -191,7 +192,7 @@ class DashboardController extends Controller
         $adminServ = new AdminService() ; 
         $adminServ -> createClub($clubInfo) ;
 
-        header('Location: admin'); 
+        header('Location: ../admin'); 
 
     }
 

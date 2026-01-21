@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="py-10 flex flex-col lg:flex-row gap-8" x-data="{ 
-            activeSection: 'clubs', 
-            showClubModal: false, 
-            showStudentModal: false
-        }">
+                    activeSection: 'clubs', 
+                    showClubModal: false, 
+                    showStudentModal: false
+                }">
         <!-- Admin Sidebar -->
         <aside class="w-full lg:w-72 space-y-6">
             <div class="glass p-6 rounded-3xl border border-blue-500/20">
@@ -78,24 +78,24 @@
                 <div class="glass p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-blue-500/5 to-transparent">
                     <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Clubs</div>
                     <div class="text-3xl font-bold flex items-center">
-                        {{ $stats['total_clubs'] }}
+                        <!-- {{ $stats['total_clubs'] }} -->
                         <span class="ml-2 text-[10px] text-green-400">+1 new</span>
                     </div>
                 </div>
                 <div
                     class="glass p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-indigo-500/5 to-transparent">
                     <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Users</div>
-                    <div class="text-3xl font-bold">{{ $stats['total_students'] }}</div>
+                    <!-- <div class="text-3xl font-bold">{{ $stats['total_students'] }}</div> -->
                 </div>
                 <div
                     class="glass p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-yellow-500/5 to-transparent">
                     <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Reviews</div>
-                    <div class="text-3xl font-bold text-yellow-500">{{ $stats['pending_reviews'] }}</div>
+                    <!-- <div class="text-3xl font-bold text-yellow-500">{{ $stats['pending_reviews'] }}</div> -->
                 </div>
                 <div
                     class="glass p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-green-500/5 to-transparent">
                     <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Active Events</div>
-                    <div class="text-3xl font-bold text-green-500">{{ $stats['active_events'] }}</div>
+                    <!-- <div class="text-3xl font-bold text-green-500">{{ $stats['active_events']}}</div> -->
                 </div>
             </div>
 
@@ -103,37 +103,91 @@
             <div x-show="activeSection === 'clubs'" class="space-y-6 animate-fadeIn">
                 <div class="flex justify-between items-end">
                     <h2 class="text-3xl font-bold">Platform Clubs <span
-                            class="text-slate-500 text-lg">({{ count($clubs) }})</span></h2>
+                            class="text-slate-500 text-lg">({{ count($clubs ?? []) }})</span></h2>
                     <div class="text-xs text-slate-500 italic">Target: 4-6 clubs per establishment</div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @foreach($clubs as $club)
+                    {{-- كنزيدو ?? [] باش يلا كانت clubs خاوية ما يوقع والو --}}
+                    @foreach($clubs ?? [] as $club)
+                        @php
+                            // --- هنا كنقادو المتغيرات باش نتفاداو الأخطاء ---
+
+                            // 1. السمية: يلا ماكانتش، كتب "بدون اسم"
+                            $nom = $club['nom'] ?? 'Unknown Club';
+
+                            // 2. الآيدي: يلا ماكانش، دير 0
+                            $id = $club['id_club'] ?? 0;
+
+                            // 3. العدد الأقصى: يلا ماكانش، دير 10
+                            $max = $club['max_membres'] ?? 10;
+
+                            // 4. الرئيس: تأكد واش كاين ولا لا
+                            $presidentId = $club['id_president'] ?? null;
+                            $presidentName = $presidentId ? "ID: " . $presidentId : "To be assigned";
+
+                            // 5. التصويرة: يلا كانت خاوية دير التصويرة الافتراضية
+                            $imgKey = $club['image_url'] ?? null;
+                            // رد البال: هنا خاصك تزيد الرابط ديال الموقع (base_url)
+                            $imagePath = $imgKey ? 'public/assets/img/' . $imgKey : 'assets/img/default-club.jpg';
+
+                            // 6. التاريخ: تأكد واش كاين قبل ما دوزو لـ strtotime
+                            $dateStr = $club['created_at'] ?? null;
+                            $displayDate = $dateStr ? date('M d, Y', strtotime($dateStr)) : 'N/A';
+
+                            // حساب النسبة المئوية (باش ما نقسموش على 0)
+                            $current = 0; // مؤقتاً 0 حتى تقاد الـ Query
+                            $percentage = $max > 0 ? ($current / $max) * 100 : 0;
+                            $isFull = $current >= $max;
+                        @endphp
+
                         <div class="glass p-6 rounded-3xl border border-slate-800 relative overflow-hidden group hover:border-blue-500/40 transition-all cursor-pointer"
-                            onclick="window.location.href='{{ $base_url }}/dashboard/admin/club/{{ $club['id'] }}'">
-                            <div class="flex justify-between items-start mb-8 relative z-10">
-                                <div>
-                                    <h3 class="text-xl font-bold leading-tight group-hover:text-blue-400 transition-colors">
-                                        {{ $club['name'] }}
-                                    </h3>
-                                    <p class="text-xs text-slate-500 mt-1 uppercase tracking-tighter">President: <span
-                                            class="text-slate-300 font-bold">{{ $club['president'] }}</span></p>
+                            onclick="window.location.href='{{ $base_url ?? '' }}/dashboard/admin/club/{{ $id }}'">
+
+                            <div class="flex justify-between items-start mb-6 relative z-10">
+                                <div class="flex items-start gap-4">
+                                    <div class="relative shrink-0">
+                                        <div
+                                            class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-slate-700 shadow-lg group-hover:border-blue-500/50 transition-colors">
+                                            {{-- حيدنا asset() واستعملنا المتغير المباشر --}}
+                                            <img src="{{ $base_url ?? '' }}/{{ $imagePath }}" alt="{{ $nom }}"
+                                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                                        </div>
+                                        <div
+                                            class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-slate-900 {{ $isFull && $max > 0 ? 'bg-red-500' : 'bg-green-500' }}">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-xl font-bold leading-tight group-hover:text-blue-400 transition-colors">
+                                            {{ $nom }}
+                                        </h3>
+                                        <p class="text-xs text-slate-500 mt-1 uppercase tracking-tighter">
+                                            President:
+                                            <span class="{{ $presidentId ? 'text-slate-300' : 'text-yellow-500' }} font-bold">
+                                                {{ $presidentName }}
+                                            </span>
+                                        </p>
+                                    </div>
                                 </div>
+
                                 <div class="flex gap-2" @click.stop>
                                     <button
-                                        class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:text-white transition-all"><svg
-                                            class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:text-white transition-all">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
                                             </path>
-                                        </svg></button>
+                                        </svg>
+                                    </button>
                                     <button
-                                        class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-red-600 hover:text-white transition-all"><svg
-                                            class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-red-600 hover:text-white transition-all">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
                                             </path>
-                                        </svg></button>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
 
@@ -142,25 +196,25 @@
                                     <div
                                         class="flex justify-between text-xs font-bold uppercase tracking-widest text-slate-500">
                                         <span>Members Capacity</span>
-                                        <span
-                                            class="{{ $club['members'] >= $club['capacity'] ? 'text-red-400' : 'text-blue-400' }}">{{ $club['members'] }}
-                                            / {{ $club['capacity'] }}</span>
+                                        <span class="{{ $isFull && $max > 0 ? 'text-red-400' : 'text-blue-400' }}">
+                                            {{ $current }} / {{ $max }}
+                                        </span>
                                     </div>
                                     <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden flex">
-                                        <div class="h-full {{ $club['status'] === 'full' ? 'bg-red-500' : 'bg-blue-500' }}"
-                                            style="width: {{ ($club['members'] / $club['capacity']) * 100 }}%"></div>
+                                        <div class="h-full {{ $isFull && $max > 0 ? 'bg-red-500' : 'bg-blue-500' }}"
+                                            style="width: {{ $percentage }}%"></div>
                                     </div>
                                 </div>
-                                <div class="flex justify-end">
+                                <div class="flex justify-between items-center mt-4 border-t border-slate-800 pt-3">
+                                    <span class="text-[10px] text-slate-500">Created: {{ $displayDate }}</span>
                                     <span
                                         class="text-[10px] font-black text-blue-500 uppercase tracking-widest group-hover:translate-x-1 transition-transform">View
-                                        Full Profile →</span>
+                                        Profile →</span>
                                 </div>
                             </div>
 
-                            <!-- Decorative BG -->
-                            <div
-                                class="absolute top-0 right-0 -mr-10 -mt-10 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/10 transition-colors">
+                            <div class="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 rounded-full opacity-20 pointer-events-none group-hover:opacity-30 transition-opacity"
+                                style="background: radial-gradient(circle, rgba(59,130,246,0.4) 0%, rgba(0,0,0,0) 70%);">
                             </div>
                         </div>
                     @endforeach
@@ -295,7 +349,7 @@
                                 Members</label>
                             <input type="number" name="max_membres" value="8"
                                 class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm"
-                                required min="1">
+                                required min="6" max="8">
                         </div>
 
                         <div>

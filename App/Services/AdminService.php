@@ -26,6 +26,10 @@ class AdminService
             return false;
         }
 
+        if($coachInfo['max_membres'] > 8 || $coachInfo['max_membres'] < 6 ) {
+            return false ; 
+        }
+
         $coachInfo['image_url'] = $return;
 
         $clubRep->create($coachInfo);
@@ -36,7 +40,7 @@ class AdminService
     {
         if ($file['error'] === 0) {
             $filename = uniqid() . '_' . $file['name'];
-            $pathfile = SRC_PATH . '/public/assets/img' . $filename;
+            $pathfile = SRC_PATH . '/public/assets/img/' . $filename;
             if (move_uploaded_file($file['tmp_name'], $pathfile)) {
                 return $filename;
             }
