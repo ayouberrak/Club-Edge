@@ -7,10 +7,10 @@ use PDO;
 class StudentRepository
 {
     private $db;
-
-    public function __construct($db)
+/* // turbo */
+    public function __construct()
     {
-        $this->db = $db;
+        $this->db = \Config\Database::getInstance()->getConnection();
     }
 
 
