@@ -7,17 +7,16 @@ use App\Services\AdminService;
 use App\Services\ClubService;
 use Core\Controller;
 use App\Services\ArticleServices;
+use App\Repository\StudentRepository;
 
 class DashboardController extends Controller
 {
     private ArticleServices $articleServices;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->articleServices = new ArticleServices();
-        $this->db = Database::getInstance()->getConnection();
         if(session_status() == PHP_SESSION_NONE) session_start();
     }
 
@@ -43,7 +42,7 @@ class DashboardController extends Controller
         $this->checkAuth();
         
 
-        $repo = new StudentRepository($this->db);
+        $repo = new StudentRepository();
         $userId = $_SESSION['user_id'];
 
 
@@ -60,7 +59,7 @@ class DashboardController extends Controller
     {
         $this->checkAuth();
 
-        $repo = new StudentRepository($this->db);
+        $repo = new StudentRepository();
         $userId = $_SESSION['user_id'];
 
         return $this->render('dashboards.student.events', [
@@ -72,7 +71,7 @@ class DashboardController extends Controller
     {
         $this->checkAuth();
 
-        $repo = new StudentRepository($this->db);
+        $repo = new StudentRepository();
         $userId = $_SESSION['user_id'];
 
         return $this->render('dashboards.student.articles', [
