@@ -10,8 +10,7 @@ class ClubController extends Controller
 {
     public function testClubDetails()
 {
-    $db = Database::getInstance()->getConnection();
-    $eventRepo = new EventRepository($db);
+    $eventRepo = new EventRepository();
 
     $events = $eventRepo->findByClub();
 
