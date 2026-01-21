@@ -11,7 +11,7 @@ class ClubService
     public function getallclub()
     {
         $clubRepository = new ClubRepository();
-        return $clubRepository->getall();
+        return $clubRepository->allClubs();
     }
 
     public function createClub($clubInfo)
@@ -52,7 +52,7 @@ class ClubService
     }
 
 
-    public function deletrclub($id)
+    public function deleteClub($id)
     {
         $clubrep = new ClubRepository();
         $countClub = $clubrep->getCountClubs();
@@ -73,20 +73,19 @@ class ClubService
     {
         $clubrep = new ClubRepository();
 
-        $return = $this->moveprofilephoto($clubinfo['image_url']);
-
-        // var_dump($clubinfo) ; 
-        // exit ; 
-
-        if (!$return) {
-            return false;
+        if (isset($clubinfo['image_url']) && !empty($clubinfo['image_url'])) {
+            $return = $this->moveprofilephoto($clubinfo['image_url']);
+            
+            if ($return) {
+                $clubinfo['image_url'] = $return;
+            } else {
+                // If upload fails but image was attempted, maybe we should return false or skip image?
+                // For now, let's return false to indicate failure.
+                 return false;
+            }
         }
 
-        $clubinfo['image_url'] = $return;
-
-
         $clubrep->update($clubinfo, $condition);
-
     }
 
     public function getclubinfo($id)
@@ -98,6 +97,12 @@ class ClubService
 
         return $clubrep->findbyid($idClub);
 
+    }
+
+    public function getPotentialPresidents()
+    {
+        $clubRep = new ClubRepository();
+        return $clubRep->getPotentialPresidents();
     }
 
 }
