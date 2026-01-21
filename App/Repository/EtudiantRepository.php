@@ -127,4 +127,42 @@ class EtudiantRepository
     }
 
     
+    public function getAllEtudiants(): array
+    {
+        try {
+            $sql = "SELECT u.id_user as id, u.nom as name, u.email, COALESCE(c.nom, 'None') as club 
+                    FROM users u 
+                    LEFT JOIN club_members cm ON u.id_user = cm.id_user 
+                    LEFT JOIN clubs c ON cm.id_club = c.id_club 
+                    WHERE u.role != 'admin' AND u.role != 'president'"; // Assuming we want students only? Or all non-admins? View says 'Student Directory'
+            
+            // Let's stick to users that are likely students.
+            // Actually, users table usually has role.
+            // Let's filter by role != 'admin' to include presidents as potential students/users too?
+            // The request said "students".
+            // Let's include 'etudiant' and 'president' (since presidents are also students)
+            
+            $stmt = $this->db->query("SELECT u.id_user as id, u.nom as name, u.email, COALESCE(c.nom, 'None') as club 
+                                      FROM users u 
+                                      LEFT JOIN club_members cm ON u.id_user = cm.id_user 
+                                      LEFT JOIN clubs c ON cm.id_club = c.id_club 
+                                      WHERE u.role != 'admin'");
+                                      
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+             throw new \Exception("Database error: " . $e->getMessage());
+        }
+    }
+
+    public function deleteStudent(int $id): bool
+    {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM users WHERE id_user = :id");
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            // Log error or throw
+            return false;
+        }
+    }
 }

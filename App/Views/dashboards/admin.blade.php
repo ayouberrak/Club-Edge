@@ -169,7 +169,7 @@
                             <td class="py-6">
                                 <div class="flex items-center space-x-4">
                                     <button @click="$dispatch('toast', { message: 'Student profile updated', type: 'success' })" class="text-blue-400 hover:underline text-xs font-bold uppercase tracking-widest">Edit</button>
-                                    <button @click="$dispatch('toast', { message: 'Student banned from platform', type: 'error' })" class="text-red-900 font-bold text-xs uppercase hover:text-red-500 transition-colors">Ban</button>
+                                    <a href="{{ $base_url }}/dashboard/admin/student/delete/{{ $student['id'] }}" onclick="return confirm('Are you sure you want to ban/delete this student?');" class="text-red-900 font-bold text-xs uppercase hover:text-red-500 transition-colors">Ban</a>
                                 </div>
                             </td>
                         </tr>

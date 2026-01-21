@@ -42,6 +42,7 @@ $router->get('/dashboard/admin', [AdminController::class, 'admin']);
 $router->get('/dashboard/admin/students', [DashboardController::class, 'adminStudents']);
 $router->get('/dashboard/admin/logs', [DashboardController::class, 'adminLogs']);
 $router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
+$router->get('/dashboard/admin/student/delete/{id}', [AdminController::class, 'deleteStudent']);
 
 // Club Management (Admin)
 $router->post('/dashboard/admin/club/create', [AdminController::class, 'createClub']);

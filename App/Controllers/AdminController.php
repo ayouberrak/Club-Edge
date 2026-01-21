@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Services\AdminService;
 use App\Services\ClubService;
+use App\Services\EtudiantsServices;
 use Core\Controller;
 
 class AdminController extends Controller
@@ -12,6 +13,14 @@ class AdminController extends Controller
     {
         $clubsService = new ClubService();
         $clubsService->deleteClub($id);
+        header('Location: ' . \Core\Helpers::url('/dashboard/admin'));
+        exit;
+    }
+
+    public function deleteStudent($id)
+    {
+        $etudiantService = new EtudiantsServices();
+        $etudiantService->deleteStudent($id);
         header('Location: ' . \Core\Helpers::url('/dashboard/admin'));
         exit;
     }
@@ -85,20 +94,23 @@ class AdminController extends Controller
         }
 
         $clubsService = new ClubService();
+        $etudiantService = new EtudiantsServices();
 
         $clubs = $clubsService->getallclub();
         $potentialPresidents = $clubsService->getPotentialPresidents();
+        $students = $etudiantService->getAllEtudiants();
 
         // Admin Dashboard Data
         return $this->render('dashboards.admin', [
             'stats' => [
-                'total_clubs' => 6,
-                'total_students' => 428,
+                'total_clubs' => count($clubs),
+                'total_students' => count($students),
                 'pending_reviews' => 14,
                 'active_events' => 8
             ],
             'clubs' => $clubs,
-            'potentialPresidents' => $potentialPresidents
+            'potentialPresidents' => $potentialPresidents,
+            'students' => $students
         ]);
     }
 
