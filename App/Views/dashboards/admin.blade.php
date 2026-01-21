@@ -68,7 +68,7 @@
             </div>
             <div class="glass p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-yellow-500/5 to-transparent">
                 <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Reviews</div>
-                <div class="text-3xl font-bold text-yellow-500">{{ $stats['pending_reviews'] }}</div>
+                <div class="text-3xl font-bold text-yellow-500">{{ $my_club[''] }}</div>
             </div>
             <div class="glass p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-green-500/5 to-transparent">
                 <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Active Events</div>
