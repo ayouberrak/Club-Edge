@@ -16,7 +16,7 @@ class ArticleServices
 
     public function createArticle(array $data ): bool
     {
-        // $data['id_event'] = 10 ; 
+        // $data['id_event'] = 11 ; 
         $article = Article::arrayToArticle($data);
         return $this->articleRepository->createArticle($article);
     }
