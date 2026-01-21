@@ -11,24 +11,18 @@ class AdminController extends Controller
     public function deleteclub($id)
     {
         $clubsService = new ClubService();
-
-        $clubsService->deletrclub($id);
-
-        header('Location: ../../admin');
-
+        $clubsService->deleteClub($id);
+        header('Location: ' . \Core\Helpers::url('/dashboard/admin'));
+        exit;
     }
 
 
     public function modifierclub($id)
     {
         header('Content-Type: application/json');
-
         $clubsService = new ClubService();
-
         $return = $clubsService->getclubinfo($id);
-
         echo json_encode($return);
-
     }
 
     public function createClub()
@@ -41,14 +35,17 @@ class AdminController extends Controller
         ];
 
         if (!empty($_POST['id_president'])) {
-            $clubInfo[] = ['id_president' => $_POST['id_president']];
+            $clubInfo['id_president'] = $_POST['id_president'];
         }
 
         $adminServ = new ClubService();
-        $adminServ->createClub($clubInfo);
+        if ($adminServ->createClub($clubInfo) === false) {
+            header('Location: ' . \Core\Helpers::url('/dashboard/admin?error=1'));
+            exit;
+        }
 
-        header('Location: ../admin');
-
+        header('Location: ' . \Core\Helpers::url('/dashboard/admin'));
+        exit;
     }
 
     public function clubaupdate()
@@ -58,11 +55,9 @@ class AdminController extends Controller
             'description' => $_POST['description'],
             'max_membres' => $_POST['max_membres']
         ];
-        // var_dump($_FILES['image_url']);
-        // exit;
 
         if (!empty($_POST['id_president'])) {
-            $clubInfo[] = ['id_president' => $_POST['id_president']];
+            $clubInfo['id_president'] = $_POST['id_president'];
         }
         if (isset($_FILES['image_url']) && $_FILES['image_url']['error'] === 0) {
             $clubInfo['image_url'] = $_FILES['image_url'];
@@ -70,16 +65,11 @@ class AdminController extends Controller
 
         $conditionEdit = ['id_club' => $_POST['id']];
 
-        // var_dump($clubInfo);
-        // exit;
-
         $clubsService = new ClubService();
-
         $clubsService->clubaupdate($clubInfo, $conditionEdit);
 
-        header('Location: ../admin');
-
-
+        header('Location: ' . \Core\Helpers::url('/dashboard/admin'));
+        exit;
     }
 
     public function admin()
@@ -97,9 +87,7 @@ class AdminController extends Controller
         $clubsService = new ClubService();
 
         $clubs = $clubsService->getallclub();
-
-        // var_dump($clubs) ; 
-        // exit ; 
+        $potentialPresidents = $clubsService->getPotentialPresidents();
 
         // Admin Dashboard Data
         return $this->render('dashboards.admin', [
@@ -109,7 +97,8 @@ class AdminController extends Controller
                 'pending_reviews' => 14,
                 'active_events' => 8
             ],
-            'clubs' => $clubs
+            'clubs' => $clubs,
+            'potentialPresidents' => $potentialPresidents
         ]);
     }
 
