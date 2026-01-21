@@ -5,6 +5,7 @@
             "App\\": "App/",
             "Core\\": "Core/",
             "Config\\": "Config/"
+
         }
     },
     "authors": [

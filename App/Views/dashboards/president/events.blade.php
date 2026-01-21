@@ -31,9 +31,16 @@
                 <h3 class="text-xl font-bold uppercase">Tech Summit V1</h3>
                 <p class="text-slate-400 text-sm">Event finished. Share the results with an article.</p>
             </div>
-            <button @click="openArticleFor('Tech Summit V1')" class="px-8 py-3 bg-indigo-600 rounded-2xl text-xs font-black uppercase tracking-widest text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/20 transition-all">
+            
+            @if(!isset($has_article) || !$has_article)
+            <button @click="openArticleFor('Tech Summit V1', 2)" class="px-8 py-3 bg-indigo-600 rounded-2xl text-xs font-black uppercase tracking-widest text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/20 transition-all">
                 Write Article
             </button>
+            @else
+            <div class="px-6 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-400 text-[10px] font-black uppercase tracking-widest">
+                Article Published
+            </div>
+            @endif
         </div>
     </div>
 </div>
