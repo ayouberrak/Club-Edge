@@ -10,9 +10,9 @@ class EventService
 {
     private  EventRepository $eventRepository;
 
-    public function __construct(EventRepository $eventRepository)
+    public function __construct()
     {
-        $this->eventRepository = $eventRepository;
+        $this->eventRepository = new EventRepository();
     }
 
 
