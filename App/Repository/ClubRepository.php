@@ -14,13 +14,40 @@ class ClubRepository
     }
 
     public function allClubs() {
-        $stmt = $this->db->prepare("SELECT c.*, u.nom as president, 
-                                    COALESCE((SELECT ROUND(AVG(a.note), 1) FROM avis a JOIN events e ON a.id_event = e.id_event WHERE e.id_club = c.id_club), 5.0) as rating
+        $stmt = $this->db->prepare("SELECT c.*, 
+                                    u.nom as president, 
+                                    COALESCE(
+                                        (SELECT ROUND(AVG(a.note), 1)
+                                         FROM avis a 
+                                         JOIN events e ON a.id_event = e.id_event 
+                                         WHERE e.id_club = c.id_club)
+                                    , 5.0) as rating,
+                                    COUNT(cm.id_user) as club_members
                                     FROM clubs c
-                                    JOIN users u ON c.id_president = u.id_user
+                                    LEFT JOIN users u ON c.id_president = u.id_user
+                                    LEFT JOIN club_members cm ON c.id_club = cm.id_club
+                                    GROUP BY c.id_club, u.nom
                                     "); 
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);   
+    }
+
+    public function findClub($clubId) {
+        $stmt = $this->db->prepare("SELECT c.*, 
+                                    u.nom as president
+                                    COALESCE(
+                                        (SELECT ROUND(AVG(a.note), 1)
+                                         FROM avis a 
+                                         JOIN events e ON a.id_event = e.id_event
+                                         WHERE e.id_club = c.id_club)
+                                    , 5.0) as rating,
+                                    FROM clubs c
+                                    JOIN users u ON c.id_president = u.id_user
+                                    LEFT JOIN club_members cm ON c.id_club = cm.id_club
+                                    WHERE c.id_club = :id_club
+                                    GROUP BY c.id_club, u.nom");
+        $stmt->execute(['id_club' => $clubId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function addMemberToClub($clubId, $userId) {

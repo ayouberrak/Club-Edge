@@ -1,4 +1,4 @@
-@extends('layouts.main')
+    @extends('layouts.main')
 
 @section('content')
 <div x-data="{ activeCategory: 'all', 
@@ -125,7 +125,7 @@
                                 <div class="w-10 h-10 rounded-full border-2 border-[#020617] bg-emerald-600 flex items-center justify-center font-black text-[10px] text-white">SA</div>
                                 <div class="w-10 h-10 rounded-full border-2 border-[#020617] bg-purple-600 flex items-center justify-center font-black text-[10px] text-white">AE</div>
                             </div>
-                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ $club['max_membres'] }} Joined</span>
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ $club['club_members'] }} Joined</span>
                         </div>
                         
                         <a href="{{ $base_url }}/club/{{ $club['id_club'] }}" class="flex items-center space-x-3 bg-white/5 px-6 py-3 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-colors border border-white/5">

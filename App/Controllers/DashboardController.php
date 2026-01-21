@@ -26,7 +26,7 @@ class DashboardController extends Controller
             exit;
         }
 
-        if(!$role !== null) {
+        if($role !== null) {
             if($_SESSION['user_role'] !== $role) {
                 header('Location: ' . $this->view->shared('base_url') . '/dashboard');
                 exit; 
@@ -39,6 +39,7 @@ class DashboardController extends Controller
     {
 
         $this->checkAuth();
+        
 
         $repo = new StudentRepository($this->db);
         $userId = $_SESSION['user_id'];
