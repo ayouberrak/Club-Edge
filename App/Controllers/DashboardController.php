@@ -49,25 +49,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function president()
-    {
-        // President Dashboard: Members
-        return $this->render('dashboards.president.index', [
-            'club' => [
-                'id' => 1,
-                'name' => 'Robotics Club',
-                'members_count' => 5,
-                'max_members' => 8
-            ],
-            'members' => [
-                ['id' => 1, 'name' => 'Anas Errak', 'email' => 'anas@univ.ma', 'role' => 'President', 'online' => true],
-                ['id' => 2, 'name' => 'John Doe', 'email' => 'john@univ.ma', 'role' => 'Member', 'online' => false],
-                ['id' => 3, 'name' => 'Sara Smith', 'email' => 'sara@univ.ma', 'role' => 'Member', 'online' => true],
-                ['id' => 4, 'name' => 'Ahmed Ali', 'email' => 'ahmed@univ.ma', 'role' => 'Member', 'online' => false],
-                ['id' => 5, 'name' => 'Yassine Kan', 'email' => 'yassine@univ.ma', 'role' => 'Member', 'online' => true],
-            ]
-        ]);
-    }
 
     public function presidentEvents()
     {
