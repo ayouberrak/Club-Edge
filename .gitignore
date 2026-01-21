@@ -2,4 +2,4 @@
 /cache
 /logs
 .env
-
+/public/assets/img
