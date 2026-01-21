@@ -29,7 +29,7 @@ class Database
         $user = DB_USER;
         $pass = DB_PASS;
 
-        $dsn = "pgsql:host=$host;dbname=$db";
+        $dsn = "pgsql:host=$host;port=5432;dbname=$db";
 
         try {
             $this->pdo = new PDO($dsn, $user, $pass);

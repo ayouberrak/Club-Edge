@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Services\AdminService;
+use App\Services\ClubService;
 use Core\Controller;
 use App\Services\ArticleServices;
 
@@ -81,35 +83,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function admin()
-    {
-
-
-        if(session_status() === PHP_SESSION_NONE) session_start();
-        
-        if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'admin') {
-            header('Location: '. $this->view->shared('base_url') . '/dashboard');
-            exit;
-        }
     
-        // Admin Dashboard Data
-        return $this->render('dashboards.admin', [
-            'stats' => [
-                'total_clubs' => 6,
-                'total_students' => 428,
-                'pending_reviews' => 14,
-                'active_events' => 8
-            ],
-            'clubs' => [
-                ['id' => 1, 'name' => 'Robotics Club', 'president' => 'Anas Errak', 'members' => 5, 'capacity' => 8, 'status' => 'active'],
-                ['id' => 2, 'name' => 'Music Club', 'president' => 'Mehdi Ray', 'members' => 8, 'capacity' => 8, 'status' => 'full'],
-                ['id' => 3, 'name' => 'Sport Club', 'president' => 'Youssef Zen', 'members' => 4, 'capacity' => 8, 'status' => 'active'],
-                ['id' => 4, 'name' => 'Chess Club', 'president' => 'Sarah Smith', 'members' => 6, 'capacity' => 8, 'status' => 'active'],
-                ['id' => 5, 'name' => 'Art Club', 'president' => 'Ines Ber', 'members' => 3, 'capacity' => 8, 'status' => 'low'],
-                ['id' => 6, 'name' => 'Coding Club', 'president' => 'Omar Far', 'members' => 7, 'capacity' => 8, 'status' => 'active'],
-            ]
-        ]);
-    }
 
     public function adminStudents()
     {
@@ -163,4 +137,8 @@ class DashboardController extends Controller
             ]
         ]);
     }
+
+    
+
+
 }
