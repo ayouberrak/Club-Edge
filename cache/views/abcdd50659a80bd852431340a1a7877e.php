@@ -1,9 +1,9 @@
 <?php $__env->startSection('content'); ?>
     <div class="py-10 flex flex-col lg:flex-row gap-8" x-data="{ 
-                    activeSection: 'clubs', 
-                    showClubModal: false, 
-                    showStudentModal: false
-                }">
+                        activeSection: 'clubs', 
+                        showClubModal: false, 
+                        showStudentModal: false
+                    }">
         <!-- Admin Sidebar -->
         <aside class="w-full lg:w-72 space-y-6">
             <div class="glass p-6 rounded-3xl border border-blue-500/20">
@@ -172,7 +172,7 @@
                                 </div>
 
                                 <div class="flex gap-2" @click.stop>
-                                    <button
+                                    <button id="formunlleModifier" data-clubid="<?php echo e($club['id_club']); ?>"
                                         class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:text-white transition-all">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -180,14 +180,14 @@
                                             </path>
                                         </svg>
                                     </button>
-                                    <button
+                                    <a href="./club/supprumer/<?php echo e($club['id_club']); ?>"
                                         class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-red-600 hover:text-white transition-all">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
                                             </path>
                                         </svg>
-                                    </button>
+                                        </a>
                                 </div>
                             </div>
 
@@ -399,6 +399,24 @@
     </div>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        let modufucation = document.querySelectorAll('#formunlleModifier');
+
+        modufucation.forEach(ele => {
+            ele.addEventListener('click' , (e) => {
+                const clubid = e.currentTarget.dataset.clubid ;
+                
+                fetch(`/Club-Edge/dashboard/club/modifier/${clubid}`) 
+                    .then(rep => rep.text())
+                    .then(data => console.log(data))
+                    .catch(error => console.error(error))
+
+            })
+            
+        });
+
+    </script>
+
     <style>
         [x-cloak] {
             display: none !important;
@@ -420,5 +438,6 @@
             }
         }
     </style>
+
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/Club-Edge/App/Views/dashboards/admin.blade.php ENDPATH**/ ?>

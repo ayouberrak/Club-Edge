@@ -71,3 +71,4 @@
 [2026-01-21 09:44:25] ERROR: Undefined variable $students (View: /var/www/html/Club-Edge/App/Views/dashboards/admin.blade.php) in /var/www/html/Club-Edge/cache/views/abcdd50659a80bd852431340a1a7877e.php:253
 [2026-01-21 09:44:25] ERROR: Undefined variable $students (View: /var/www/html/Club-Edge/App/Views/dashboards/admin.blade.php) in /var/www/html/Club-Edge/cache/views/abcdd50659a80bd852431340a1a7877e.php:253
 [2026-01-21 09:44:26] ERROR: Undefined variable $students (View: /var/www/html/Club-Edge/App/Views/dashboards/admin.blade.php) in /var/www/html/Club-Edge/cache/views/abcdd50659a80bd852431340a1a7877e.php:253
+[2026-01-21 10:35:38] ERROR: Undefined variable $students (View: /var/www/html/Club-Edge/App/Views/dashboards/admin.blade.php) in /var/www/html/Club-Edge/cache/views/abcdd50659a80bd852431340a1a7877e.php:253

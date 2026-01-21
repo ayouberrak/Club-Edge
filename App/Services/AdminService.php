@@ -6,15 +6,10 @@ use App\Repository\ClubRepository;
 class AdminService
 {
 
-    private function getCountClub(ClubRepository $clubrep)
-    {
-        return $clubrep->getCountClubs();
-    }
-
     public function createClub($coachInfo)
     {
         $clubRep = new ClubRepository();
-        $countClub = $this->getCountClub($clubRep);
+        $countClub = $clubRep -> getCountClubs() ; 
 
         if ($countClub >= 8) {
             return false;

@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\AdminController;
 use Core\Router;
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
@@ -28,12 +29,15 @@ $router->get('/dashboard/president', [DashboardController::class, 'president']);
 $router->get('/dashboard/president/events', [DashboardController::class, 'presidentEvents']);
 $router->get('/dashboard/president/articles', [DashboardController::class, 'presidentArticles']);
 
-$router->get('/dashboard/admin', [DashboardController::class, 'admin']); // Admin Clubs
+$router->get('/dashboard/admin', [AdminController::class, 'admin']); // Admin Clubs
 $router->get('/dashboard/admin/students', [DashboardController::class, 'adminStudents']);
 $router->get('/dashboard/admin/logs', [DashboardController::class, 'adminLogs']);
 $router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
 
-$router->post('/dashboard/creat/club', [DashboardController::class, 'createClub']);
+$router->post('/dashboard/creat/club', [AdminController::class, 'createClub']);
+
+$router -> get('/dashboard/club/supprumer/{id}' , [AdminController::class, 'deleteclub']) ; 
+$router -> get('/dashboard/club/modifier/{id}' , [AdminController::class, 'modifierclub']) ; 
 
 
 $router->dispatch();

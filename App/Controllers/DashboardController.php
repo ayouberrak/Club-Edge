@@ -94,35 +94,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function admin()
-    {
-
-
-        if(session_status() === PHP_SESSION_NONE) session_start();
-        
-        if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'admin') {
-            header('Location: '. $this->view->shared('base_url') . '/dashboard');
-            exit;
-        }
     
-        $clubsService = new ClubService () ; 
-
-        $clubs = $clubsService -> getallclub () ;
-
-        // var_dump($clubs) ; 
-        // exit ; 
-    
-        // Admin Dashboard Data
-        return $this->render('dashboards.admin', [
-            'stats' => [
-                'total_clubs' => 6,
-                'total_students' => 428,
-                'pending_reviews' => 14,
-                'active_events' => 8
-            ],
-            'clubs' => $clubs
-        ]);
-    }
 
     public function adminStudents()
     {
@@ -177,24 +149,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function createClub() {
-        $clubInfo = [
-            'nom' => $_POST['nom'] , 
-            'description' => $_POST['description'] , 
-            'max_membres' => $_POST['max_membres'] , 
-            'image_url' => $_FILES['image_url'] 
-        ] ;
-
-        if(!empty($_POST['id_president'])) {
-            $clubInfo [] = ['id_president' => $_POST['id_president']] ; 
-        } 
-
-        $adminServ = new AdminService() ; 
-        $adminServ -> createClub($clubInfo) ;
-
-        header('Location: ../admin'); 
-
-    }
+    
 
 
 }

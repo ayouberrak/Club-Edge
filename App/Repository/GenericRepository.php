@@ -105,7 +105,9 @@ abstract class GenericRepository
     {
         $table = $this->getTablename();
 
-        $sql = "SELECT * FROM $table WHERE id = ?";
+        $key = array_key_first($id) ; 
+
+        $sql = "SELECT * FROM $table WHERE $key = ?";
 
         try {
             $pdo = Database::getInstance()->getConnection();
