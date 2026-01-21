@@ -1,6 +1,6 @@
-    @extends('layouts.main')
+    
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div x-data="{ activeCategory: 'all', 
              filterClubs(category) {
                 this.activeCategory = category;
@@ -37,7 +37,7 @@
                     <a href="#clubs" class="btn-gradient px-14 py-6 rounded-[2.5rem] font-black text-xl shadow-[0_20px_50px_rgba(99,102,241,0.3)] hover:scale-105 active:scale-95 transition-all">
                         Explore Clubs
                     </a>
-                    <a href="{{ $base_url }}/register" class="glass px-14 py-6 rounded-[2.5rem] font-black text-xl border-white/10 hover:bg-white/5 hover:border-white/20 transition-all flex items-center space-x-3">
+                    <a href="<?php echo e($base_url); ?>/register" class="glass px-14 py-6 rounded-[2.5rem] font-black text-xl border-white/10 hover:bg-white/5 hover:border-white/20 transition-all flex items-center space-x-3">
                         <span>Create Club</span>
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                     </a>
@@ -72,13 +72,13 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            @foreach($clubs as $club)
+            <?php $__currentLoopData = $clubs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $club): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div 
                  class="group relative bg-[#0f172a]/40 rounded-[3.5rem] p-6 border border-white/5 hover:border-indigo-500/30 transition-all duration-500 overflow-hidden shadow-2xl">
                 
                 <!-- Image Container -->
                 <div class="relative h-72 w-full rounded-[2.8rem] overflow-hidden mb-8">
-                    <img src="{{ $club['image_url'] }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                    <img src="<?php echo e($club['image_url']); ?>" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent"></div>
                     
                     <!-- Status Badge -->   
@@ -92,7 +92,7 @@
                     <!-- Established Badge -->
                     <div class="absolute top-6 right-6">
                         <div class="px-4 py-2 glass rounded-2xl border-white/10">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Est. {{ $club['created_at'] }}</span>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Est. <?php echo e($club['created_at']); ?></span>
                         </div>
                     </div>
                 </div>
@@ -101,20 +101,21 @@
                 <div class="space-y-6 px-4 pb-4">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-3xl font-black text-white leading-none tracking-tight mb-2 group-hover:text-indigo-400 transition-colors">{{ $club['nom'] }}</h3>
+                            <h3 class="text-3xl font-black text-white leading-none tracking-tight mb-2 group-hover:text-indigo-400 transition-colors"><?php echo e($club['nom']); ?></h3>
                             <div class="flex items-center text-slate-500 text-xs font-bold uppercase tracking-widest space-x-2">
                                 <svg class="w-4 h-4 text-indigo-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                                <span>{{ $club['president'] }}</span>
+                                <span><?php echo e($club['president']); ?></span>
                             </div>
                         </div>
                         <div class="flex items-center gap-1.5 bg-indigo-500/10 px-3 py-1.5 rounded-xl border border-indigo-500/20">
                             <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                            <span class="text-xs font-black text-white">{{ $club['rating'] }}</span>
+                            <span class="text-xs font-black text-white"><?php echo e($club['rating']); ?></span>
                         </div>
                     </div>
 
                     <p class="text-slate-400 text-sm font-medium leading-relaxed line-clamp-2">
-                        {{ $club['description'] }}
+                        <?php echo e($club['description']); ?>
+
                     </p>
 
                     <!-- Footer Stats -->
@@ -125,10 +126,10 @@
                                 <div class="w-10 h-10 rounded-full border-2 border-[#020617] bg-emerald-600 flex items-center justify-center font-black text-[10px] text-white">SA</div>
                                 <div class="w-10 h-10 rounded-full border-2 border-[#020617] bg-purple-600 flex items-center justify-center font-black text-[10px] text-white">AE</div>
                             </div>
-                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ $club['club_members'] }} Joined</span>
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest"><?php echo e($club['club_members']); ?> Joined</span>
                         </div>
                         
-                        <a href="{{ $base_url }}/club/{{ $club['id_club'] }}" class="flex items-center space-x-3 bg-white/5 px-6 py-3 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-colors border border-white/5">
+                        <a href="<?php echo e($base_url); ?>/club/<?php echo e($club['id_club']); ?>" class="flex items-center space-x-3 bg-white/5 px-6 py-3 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-colors border border-white/5">
                             <span>Details</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </a>
@@ -138,7 +139,7 @@
                 <!-- Hover Glow -->
                 <div class="absolute -inset-px bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-[3.5rem] opacity-0 group-hover:opacity-100 transition-opacity blur-2xl pointer-events-none"></div>
             </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
 
         <!-- CTA Section -->
@@ -156,7 +157,7 @@
                         The road to excellence starts here. Join thousands of students and build something extraordinary.
                     </p>
                     <div class="flex justify-center pt-8">
-                        <a href="{{ $base_url }}/register" class="btn-gradient px-16 py-6 rounded-[2.5rem] font-black text-xl shadow-2xl">
+                        <a href="<?php echo e($base_url); ?>/register" class="btn-gradient px-16 py-6 rounded-[2.5rem] font-black text-xl shadow-2xl">
                             Create Your Account
                         </a>
                     </div>
@@ -182,4 +183,6 @@
         animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/Club-Edge/App/Views/home.blade.php ENDPATH**/ ?>

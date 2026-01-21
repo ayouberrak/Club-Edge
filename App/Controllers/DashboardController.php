@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+
 use App\Services\AdminService;
 use App\Services\ClubService;
 use Core\Controller;
@@ -10,50 +11,95 @@ use App\Services\ArticleServices;
 class DashboardController extends Controller
 {
     private ArticleServices $articleServices;
+    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->articleServices = new ArticleServices();
+        $this->db = Database::getInstance()->getConnection();
+        if(session_status() == PHP_SESSION_NONE) session_start();
     }
 
-    public function index()
-    {
-       if(session_status() === PHP_SESSION_NONE) session_start();
+    private function checkAuth($role = null) {
 
         if(!isset($_SESSION['user_id'])) {
             header('Location: ' . $this->view->shared('base_url') . '/login');
             exit;
         }
 
+        if($role !== null) {
+            if($_SESSION['user_role'] !== $role) {
+                header('Location: ' . $this->view->shared('base_url') . '/dashboard');
+                exit; 
+            }
+        }
+
+    }
+
+    public function index()
+    {
+
+        $this->checkAuth();
+        
+
+        $repo = new StudentRepository($this->db);
+        $userId = $_SESSION['user_id'];
+
+
         // Student Dashboard Data
         return $this->render('dashboards.student', [
-            'my_club' => [
-                'id' => 1,
-                'name' => 'Robotics Club',
-                'joined_at' => '2025-09-12',
-                'image' => 'https://images.unsplash.com/photo-1581092160562-40aa08e78837',
-                'members_count' => 5,
-                'max_members' => 8
-            ]
+            'my_club' => $repo->getClub($userId),
+            'registered_events' => $repo->getRegisteredEvents($userId),
+            'reviews_count' => $repo->getReviewsCount($userId),
+            'past_articles' => []
         ]);
     }
 
     public function studentEvents()
     {
+        $this->checkAuth();
+
+        $repo = new StudentRepository($this->db);
+        $userId = $_SESSION['user_id'];
+
         return $this->render('dashboards.student.events', [
-            'registered_events' => [
-                ['id' => 1, 'title' => 'Advanced Arduino', 'date' => '2026-02-15', 'location' => 'Room 402', 'status' => 'upcoming'],
-                ['id' => 2, 'title' => 'Annual Tech Summit', 'date' => '2026-01-10', 'location' => 'Main Hall', 'status' => 'completed', 'reviewed' => false],
-            ]
+            'registered_events' => $repo->getRegisteredEvents($userId)
         ]);
-    }
+    }   
 
     public function studentArticles()
     {
+        $this->checkAuth();
+
+        $repo = new StudentRepository($this->db);
+        $userId = $_SESSION['user_id'];
+
         return $this->render('dashboards.student.articles', [
-            'past_articles' => [
-                ['id' => 101, 'title' => 'Exploring AI in 2026', 'club' => 'Robotics Club', 'date' => 'Yesterday'],
+            'past_articles' => $repo->getArticles($userId)
+        ]);
+    }
+
+    public function president()
+    {
+
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        $this->checkAuth('president');
+
+        // President Dashboard Data (Manages Robotics Club)
+        return $this->render('dashboards.president', [
+            'club' => [
+                'name' => 'Robotics Club',
+                'members_count' => 5,
+                'max_members' => 8
+            ],
+            'members' => [
+                ['id' => 1, 'name' => 'Anas Errak', 'email' => 'anas@univ.ma', 'role' => 'President', 'online' => true],
+                ['id' => 2, 'name' => 'John Doe', 'email' => 'john@univ.ma', 'role' => 'Member', 'online' => false],
+                ['id' => 3, 'name' => 'Sara Smith', 'email' => 'sara@univ.ma', 'role' => 'Member', 'online' => true],
+                ['id' => 4, 'name' => 'Ahmed Ali', 'email' => 'ahmed@univ.ma', 'role' => 'Member', 'online' => false],
+                ['id' => 5, 'name' => 'Yassine Kan', 'email' => 'yassine@univ.ma', 'role' => 'Member', 'online' => true],
             ]
         ]);
     }
@@ -83,7 +129,15 @@ class DashboardController extends Controller
         ]);
     }
 
-    
+
+    public function admin()
+    {
+
+
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        $this->checkAuth('admin');
+    }
 
     public function adminStudents()
     {
