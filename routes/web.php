@@ -1,6 +1,7 @@
 <?php
 
 use App\Controllers\ArticlesController;
+use App\Controllers\EtudiantController;
 use Core\Router;
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
@@ -24,7 +25,7 @@ $router->get('/dashboard', [DashboardController::class, 'index']); // Student Ov
 $router->get('/dashboard/events', [DashboardController::class, 'studentEvents']);
 $router->get('/dashboard/articles', [DashboardController::class, 'studentArticles']);
 
-$router->get('/dashboard/president', [DashboardController::class, 'president']); // President Members
+$router->get('/dashboard/president', [EtudiantController::class, 'index']); // President Members
 
 $router->get('/dashboard/president/events', [DashboardController::class, 'presidentEvents']);
 $router->post('/dashboard/president/events', [ArticlesController::class, 'createArticle']);
