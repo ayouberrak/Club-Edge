@@ -2,6 +2,7 @@
 
 use App\Controllers\ArticlesController;
 use App\Controllers\EtudiantController;
+use App\Controllers\AdminController;
 use Core\Router;
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
@@ -45,11 +46,18 @@ $router->get('/dashboard/president', [EtudiantController::class, 'index']); // P
 $router->post('/events/store', [EventController::class, 'store']);
 $router->get('/dashboard/president/articles', [DashboardController::class, 'presidentArticles']);
 
-$router->get('/dashboard/admin', [DashboardController::class, 'admin']); // Admin Clubs
+$router->get('/dashboard/admin', [AdminController::class, 'admin']); // Admin Clubs
 $router->get('/dashboard/admin/students', [DashboardController::class, 'adminStudents']);
 $router->get('/dashboard/admin/logs', [DashboardController::class, 'adminLogs']);
 $router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
 
 /* test recuperation detaills de club */
 $router->get('/dashboard/admin/club', [ClubController::class, 'testClubDetails']);
+$router->post('/dashboard/creat/club', [AdminController::class, 'createClub']);
+
+$router -> get('/dashboard/club/supprumer/{id}' , [AdminController::class, 'deleteclub']) ; 
+$router -> get('/dashboard/club/modifier/{id}' , [AdminController::class, 'modifierclub']) ; 
+
+$router -> post('/dashboard/club/update' , [AdminController::class, 'clubaupdate']) ; 
+
 $router->dispatch();
