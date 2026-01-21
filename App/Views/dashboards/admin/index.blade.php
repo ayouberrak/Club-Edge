@@ -9,7 +9,7 @@
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         @foreach($clubs as $club)
-        <div class="glass p-6 rounded-3xl border border-slate-800 relative overflow-hidden group hover:border-blue-500/40 transition-all cursor-pointer" onclick="window.location.href='{{ $base_url }}/dashboard/admin/club/{{ $club['id'] }}'">
+        <div class="glass p-6 rounded-3xl border border-slate-800 relative overflow-hidden group hover:border-blue-500/40 transition-all cursor-pointer" onclick="window.location.href='{{ $base_url }}/dashboard/admin/club/{{  }}'">
             <div class="flex justify-between items-start mb-8 relative z-10">
                 <div>
                     <h3 class="text-xl font-bold leading-tight group-hover:text-blue-400 transition-colors">{{ $club['name'] }}</h3>
@@ -28,7 +28,7 @@
                         <span class="{{ $club['members'] >= $club['capacity'] ? 'text-red-400' : 'text-blue-400' }}">{{ $club['members'] }} / {{ $club['capacity'] }}</span>
                     </div>
                     <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden flex">
-                        <div class="h-full {{ $club['members'] >= $club['capacity'] ? 'bg-red-500' : 'bg-blue-500' }}" style="width: {{ ($club['members'] / $club['capacity']) * 100 }}%"></div>
+                        <div class="h-full {{ $club['members'] >= $club['capacity'] ? 'bg-red-500' : 'bg-blue-500' }}"></div>
                     </div>
                 </div>
                 <div class="flex justify-end">

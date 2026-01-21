@@ -1,6 +1,8 @@
 /vendor
+.vscode
 /cache
 /logs
+
 
 /.env
 /public/upload

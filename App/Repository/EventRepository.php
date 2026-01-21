@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Repository;
+
+use App\Models\Event;
+use PDO;
+
+class EventRepository
+{
+    private PDO $db;
+
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
+    }
+
+
+    public function create(Event $event): bool
+    {
+        $sql = "INSERT INTO events (titre, description, date_event, lieu, image_event, id_club) 
+                VALUES (:titre, :description, :date_event, :lieu, :image_event, :id_club)";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':titre' => $event->getTitre(),
+            ':description' => $event->getDescription(),
+            ':date_event' => $event->getDateEvent(),
+            ':lieu' => $event->getLieu(),
+            ':image_event' => $event->getImageEvent(),
+            ':id_club' => $event->getIdClub()
+        ]);
+    }
+
+    public function findAll(): array
+    {
+        $sql = "SELECT 
+                id_event as id,
+                titre as title, 
+                date_event as date, 
+                lieu as location,
+                CASE 
+                    WHEN image_event IS NOT NULL AND image_event != '' 
+                    THEN CONCAT('/upload/imageevent/', image_event)
+                    ELSE 'https://images.unsplash.com/photo-1540575861501-7ad06763821d' 
+                END as image,
+                (SELECT COUNT(*) FROM participations WHERE id_event = events.id_event) as participants
+            FROM events 
+            ORDER BY date_event DESC";
+
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function findByClub(): array
+    {
+        $sql = "SELECT 
+                titre as title, 
+                date_event as date, 
+                '12' as attendance -- Valeur statique pour le test
+            FROM events 
+            WHERE id_club = 2";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function delete(int $id): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM events WHERE id_event = :id");
+        return $stmt->execute([':id' => $id]);
+    }
+}
