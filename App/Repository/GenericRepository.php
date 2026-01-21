@@ -166,6 +166,8 @@ abstract class GenericRepository
 
         $sql = "UPDATE $table SET $columns WHERE $colCondition = ? ";
 
+
+
         // var_dump($sql , $values , $columns , $colCondition ) ;
         // exit ; 
 

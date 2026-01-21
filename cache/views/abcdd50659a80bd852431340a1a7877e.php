@@ -1,9 +1,9 @@
 <?php $__env->startSection('content'); ?>
     <div class="py-10 flex flex-col lg:flex-row gap-8" x-data="{ 
-                        activeSection: 'clubs', 
-                        showClubModal: false, 
-                        showStudentModal: false
-                    }">
+                                        activeSection: 'clubs', 
+                                        showClubModal: false, 
+                                        showStudentModal: false
+                                    }">
         <!-- Admin Sidebar -->
         <aside class="w-full lg:w-72 space-y-6">
             <div class="glass p-6 rounded-3xl border border-blue-500/20">
@@ -187,7 +187,7 @@
                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
                                             </path>
                                         </svg>
-                                        </a>
+                                    </a>
                                 </div>
                             </div>
 
@@ -396,23 +396,131 @@
                 </form>
             </div>
         </div>
+
+        <!-- Modal Hidden Initially -->
+        <div id="modifyClubModal"
+            class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md">
+
+            <div class="glass w-full max-w-lg p-10 rounded-[2.5rem] border border-blue-500/30 shadow-[0_0_50px_rgba(37,99,235,0.1)]"
+                id="modalContent">
+
+                <h2 class="text-3xl font-black text-white mb-2 leading-none uppercase tracking-tighter">
+                    Modify Club
+                </h2>
+                <p class="text-slate-500 text-sm mb-10">
+                    Update club information.
+                </p>
+
+                <form id="modifyClubForm" class="space-y-4"  enctype="multipart/form-data" method="post" action="club/update"
+                    enctype="multipart/form-data">
+
+                    <!-- Hidden ID -->
+                    <input type="hidden" name="id" id="club_id">
+
+                    <div>
+                        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">
+                            Club Designation
+                        </label>
+                        <input type="text" name="nom" id="club_nom"
+                            class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm"
+                            required maxlength="100">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">
+                            Mission Statement
+                        </label>
+                        <textarea name="description" id="club_description"
+                            class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white text-sm h-24 focus:border-blue-500 focus:outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">
+                                Max Members
+                            </label>
+                            <input type="number" name="max_membres" id="club_max"
+                                class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm"
+                                min="6" max="8">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">
+                                President
+                            </label>
+                            <select name="id_president" id="club_president"
+                                class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all appearance-none cursor-pointer text-sm">
+                                <option value="">Select...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">
+                            Club Image
+                        </label>
+                        <input type="file" name="image_url" accept="image/*" class="hidden" id="clubImageInputmodifier">
+                        <label for="clubImageInputmodifier"
+                            class="flex items-center justify-center w-full bg-slate-900/50 border-2 border-slate-800 border-dashed rounded-2xl px-4 py-5 text-slate-500 font-bold cursor-pointer hover:border-blue-500 transition-all">
+                            Upload New Image
+                        </label>
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" id="closeModalBtn"
+                            class="flex-1 py-3 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                            class="flex-[2] bg-blue-600 py-3 rounded-2xl font-black text-white uppercase tracking-widest text-sm shadow-lg shadow-blue-600/30 hover:scale-[1.02] transition-all">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
     </div>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
         let modufucation = document.querySelectorAll('#formunlleModifier');
+        const modal = document.getElementById('modifyClubModal');
 
         modufucation.forEach(ele => {
-            ele.addEventListener('click' , (e) => {
-                const clubid = e.currentTarget.dataset.clubid ;
-                
-                fetch(`/Club-Edge/dashboard/club/modifier/${clubid}`) 
-                    .then(rep => rep.text())
-                    .then(data => console.log(data))
+            ele.addEventListener('click', (e) => {
+                const clubid = e.currentTarget.dataset.clubid;
+
+                fetch(`/Club-Edge/dashboard/club/modifier/${clubid}`)
+                    .then(rep => rep.json())
+                    .then(data => {
+                        console.log(data);
+                        openModifyModal(data);
+                    })
                     .catch(error => console.error(error))
 
             })
-            
+
+            function openModifyModal(clubData) {
+                const modal = document.getElementById('modifyClubModal');
+                modal.style.display = 'flex';
+
+                document.getElementById('club_id').value = clubData.id_club || '';
+                document.getElementById('club_nom').value = clubData.nom || '';
+                document.getElementById('club_description').value = clubData.description || '';
+                document.getElementById('club_max').value = clubData.max_membres || '';
+                document.getElementById('club_president').value = clubData.id_president || '';
+            }
+
+
+            document.querySelector('#closeModalBtn').addEventListener('click' , () => {
+                modal.style.display = 'none';
+                console.log('jefspfo') ;
+            })
+
+
         });
 
     </script>

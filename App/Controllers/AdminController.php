@@ -25,9 +25,9 @@ class AdminController extends Controller
 
         $clubsService = new ClubService();
 
-        $return = $clubsService->getclubinfo($id) ;
+        $return = $clubsService->getclubinfo($id);
 
-        echo json_encode($return) ;
+        echo json_encode($return);
 
     }
 
@@ -44,10 +44,41 @@ class AdminController extends Controller
             $clubInfo[] = ['id_president' => $_POST['id_president']];
         }
 
-        $adminServ = new AdminService();
+        $adminServ = new ClubService();
         $adminServ->createClub($clubInfo);
 
         header('Location: ../admin');
+
+    }
+
+    public function clubaupdate()
+    {
+        $clubInfo = [
+            'nom' => $_POST['nom'],
+            'description' => $_POST['description'],
+            'max_membres' => $_POST['max_membres']
+        ];
+        // var_dump($_FILES['image_url']);
+        // exit;
+
+        if (!empty($_POST['id_president'])) {
+            $clubInfo[] = ['id_president' => $_POST['id_president']];
+        }
+        if (isset($_FILES['image_url']) && $_FILES['image_url']['error'] === 0) {
+            $clubInfo['image_url'] = $_FILES['image_url'];
+        }
+
+        $conditionEdit = ['id_club' => $_POST['id']];
+
+        // var_dump($clubInfo);
+        // exit;
+
+        $clubsService = new ClubService();
+
+        $clubsService->clubaupdate($clubInfo, $conditionEdit);
+
+        header('Location: ../admin');
+
 
     }
 

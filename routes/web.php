@@ -39,5 +39,6 @@ $router->post('/dashboard/creat/club', [AdminController::class, 'createClub']);
 $router -> get('/dashboard/club/supprumer/{id}' , [AdminController::class, 'deleteclub']) ; 
 $router -> get('/dashboard/club/modifier/{id}' , [AdminController::class, 'modifierclub']) ; 
 
+$router -> post('/dashboard/club/update' , [AdminController::class, 'clubaupdate']) ; 
 
 $router->dispatch();
