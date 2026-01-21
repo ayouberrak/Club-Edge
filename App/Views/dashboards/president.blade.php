@@ -182,16 +182,38 @@
     </div>
 
     <!-- Article Modal -->
-    <div x-show="showArticleModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md" x-cloak>
+    <div x-show="showArticleModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md" x-cloak x-data="{ imageUrl: null }">
         <div class="glass w-full max-w-2xl p-10 rounded-[2.5rem] border border-white/10" @click.away="showArticleModal = false">
             <h2 class="text-2xl font-black mb-4 uppercase tracking-tighter">Post-Event <span class="text-indigo-500">Article</span></h2>
             <p class="text-slate-500 text-sm mb-10">Sharing insights for: <span x-text="articleEventTitle" class="text-white font-bold italic"></span></p>
+            
             <form class="space-y-6">
                 <input type="text" class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none" placeholder="Article Catchy Title">
+
+                <div class="relative group">
+                    <input type="file" id="articleImage" class="hidden" accept="image/*" 
+                        @change="const file = $event.target.files[0]; if (file) { imageUrl = URL.createObjectURL(file) }">
+                    
+                    <label for="articleImage" class="cursor-pointer flex flex-col items-center justify-center w-full h-32 bg-slate-900/30 border-2 border-dashed border-white/10 rounded-2xl hover:border-indigo-500/50 transition-colors overflow-hidden">
+                        <template x-if="!imageUrl">
+                            <div class="flex flex-col items-center text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-xs font-bold uppercase tracking-widest">Add a Cover Photo</span>
+                            </div>
+                        </template>
+                        <template x-if="imageUrl">
+                            <img :src="imageUrl" class="w-full h-full object-cover">
+                        </template>
+                    </label>
+                </div>
+
                 <textarea class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 focus:outline-none h-48" placeholder="Tell the world what happened..."></textarea>
+                
                 <div class="flex gap-4">
-                    <button type="button" @click="showArticleModal = false" class="flex-1 py-4 text-slate-500 font-bold uppercase tracking-widest text-xs">Discard</button>
-                    <button type="button" @click="showArticleModal = false; activeTab = 'articles'; $dispatch('toast', { message: 'Article published for everyone!', type: 'success' })" class="flex-[3] bg-indigo-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-xl shadow-indigo-600/20">POST STORY</button>
+                    <button type="button" @click="showArticleModal = false; imageUrl = null" class="flex-1 py-4 text-slate-500 font-bold uppercase tracking-widest text-xs">Discard</button>
+                    <button type="button" @click="showArticleModal = false; activeTab = 'articles'; imageUrl = null; $dispatch('toast', { message: 'Article published for everyone!', type: 'success' })" class="flex-[3] bg-indigo-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-xl shadow-indigo-600/20">POST STORY</button>
                 </div>
             </form>
         </div>

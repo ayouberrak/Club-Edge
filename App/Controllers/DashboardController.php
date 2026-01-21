@@ -3,9 +3,18 @@
 namespace App\Controllers;
 
 use Core\Controller;
+use App\Services\ArticleServices;
 
 class DashboardController extends Controller
 {
+    private ArticleServices $articleServices;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->articleServices = new ArticleServices();
+    }
+
     public function index()
     {
        if(session_status() === PHP_SESSION_NONE) session_start();
@@ -47,33 +56,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function president()
-    {
-
-        if(session_status() === PHP_SESSION_NONE) session_start();
-        
-        if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'president') {
-            header('Location: '. $this->view->shared('base_url') . '/dashboard');
-            exit;
-        }
-
-        // President Dashboard Data (Manages Robotics Club)
-        return $this->render('dashboards.president', [
-            'club' => [
-                'name' => 'Robotics Club',
-                'members_count' => 5,
-                'max_members' => 8
-            ],
-            'members' => [
-                ['id' => 1, 'name' => 'Anas Errak', 'email' => 'anas@univ.ma', 'role' => 'President', 'online' => true],
-                ['id' => 2, 'name' => 'John Doe', 'email' => 'john@univ.ma', 'role' => 'Member', 'online' => false],
-                ['id' => 3, 'name' => 'Sara Smith', 'email' => 'sara@univ.ma', 'role' => 'Member', 'online' => true],
-                ['id' => 4, 'name' => 'Ahmed Ali', 'email' => 'ahmed@univ.ma', 'role' => 'Member', 'online' => false],
-                ['id' => 5, 'name' => 'Yassine Kan', 'email' => 'yassine@univ.ma', 'role' => 'Member', 'online' => true],
-            ]
-        ]);
-    }
-
     public function presidentEvents()
     {
         return $this->render('dashboards.president.events', [
@@ -81,14 +63,21 @@ class DashboardController extends Controller
                 ['id' => 1, 'title' => 'Cyber Security Talk', 'date' => '2026-03-12', 'participants' => 24, 'image' => 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b'],
                 ['id' => 2, 'title' => 'IoT Workshop', 'date' => '2026-04-05', 'participants' => 12, 'image' => 'https://images.unsplash.com/photo-1518770660439-4636190af475'],
             ],
-            'club' => ['name' => 'Robotics Club']
+            'club' => ['id' => 1, 'name' => 'Robotics Club']
         ]);
     }
 
     public function presidentArticles()
     {
+        // In a real application, the club ID would come from the session:
+        // $id_club = $_SESSION['user']['id_club'];
+        $id_club = 1; // Mocking with 1 for now
+
+        $articles = $this->articleServices->getArticlesByClub($id_club);
+
         return $this->render('dashboards.president.articles', [
-            'club' => ['name' => 'Robotics Club']
+            'club' => ['id' => $id_club, 'name' => 'Robotics Club'],
+            'articles' => $articles
         ]);
     }
 

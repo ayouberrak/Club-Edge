@@ -2,10 +2,32 @@
 
 namespace App\Controllers;
 
+use App\Models\Event;
+use App\Repository\EventRepository;
+use Config\Database;
 use Core\Controller;
-
 class ClubController extends Controller
 {
+    public function testClubDetails()
+{
+    $db = Database::getInstance()->getConnection();
+    $eventRepo = new EventRepository($db);
+
+    $events = $eventRepo->findByClub();
+
+    return $this->render('dashboards.admin.club_details', [
+        'club' => [
+            'id' => 1,
+            'name' => 'Club de Test',
+            'description' => 'Ceci est une description de test',
+            'president' => 'Jean Dupont',
+            'members' => 5,
+            'capacity' => 8
+        ],
+        'events' => $events,
+        'articles' => [] // On laisse vide pour le test
+    ]);
+}
     public function show($id)
     {
         if(session_status() === PHP_SESSION_NONE) session_start();

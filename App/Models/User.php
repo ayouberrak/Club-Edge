@@ -10,7 +10,7 @@ class User
     private string $password;
     private string $role;
 
-    public function __construct(?int $id_user = null, string $nom = "", string $email = "", string $password = "", string $role = "etudiant")
+    public function __construct(?int $id_user = null, string $nom = "", string $email = "", string $password = "", string $role = "" ? "etudiant" : "")
     {
         $this->id_user = $id_user;
         $this->nom = $nom;

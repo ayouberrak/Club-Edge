@@ -1,0 +1,107 @@
+<?php
+
+namespace App\Controllers;
+
+use Core\Controller;
+use App\Services\EventService;
+use App\Models\Event;
+use App\Repository\EventRepository;
+use Config\Database;
+
+class EventController extends Controller
+{
+    private EventService $eventService;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $dbInstance = Database::getInstance();
+        $pdo = $dbInstance->getConnection();
+        $eventRepository = new EventRepository($pdo);
+        $this->eventService = new EventService($eventRepository);
+    }
+
+/* affiche les evenment à venir */
+    public function index()
+{
+    $allEvents = $this->eventService->getAllEvents();
+    $now = time();
+
+    // Filtrer les événements à venir
+    $upcomingEvents = array_filter($allEvents, function($event) use ($now) {
+        return strtotime($event['date']) >= $now;
+    });
+
+    // Filtrer les événements passés
+    $pastEvents = array_filter($allEvents, function($event) use ($now) {
+        return strtotime($event['date']) < $now;
+    });
+
+    return $this->render('dashboards.president.events', [
+        'upcomingEvents' => $upcomingEvents,
+        'pastEvents' => $pastEvents,
+        'club' => [
+            'id' => 1,
+            'name' => 'Robotics Club',
+            'members_count' => 12,
+            'max_members' => 20
+        ]
+    ]);
+}
+
+    public function store()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $titre = $_POST['titre'] ?? '';
+            $description = $_POST['description'] ?? '';
+            $date_event = $_POST['date_event'] ?? '';
+            $lieu = $_POST['lieu'] ?? '';
+            $id_club = isset($_POST['id_club']) ? (int)$_POST['id_club'] : 0;
+
+
+            $imageName = null;
+            if (isset($_FILES['image_event']) && $_FILES['image_event']['error'] === 0) {
+                $uploadDir = __DIR__ . '/../../public/upload/imageevent/';
+
+
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+
+
+                $extension = pathinfo($_FILES['image_event']['name'], PATHINFO_EXTENSION);
+                $imageName = bin2hex(random_bytes(10)) . '.' . $extension;
+                $targetPath = $uploadDir . $imageName;
+
+                if (!move_uploaded_file($_FILES['image_event']['tmp_name'], $targetPath)) {
+                    $imageName = null; // En cas d'échec
+                }
+            }
+
+            $event = new Event(null, $titre, $date_event, $id_club);
+            $event->setDescription($description);
+            $event->setLieu($lieu);
+            $event->setImageEvent($imageName);
+
+            $userRole = $_SESSION['user_role'] ?? 'president';
+
+            try {
+                $success = $this->eventService->organizeEvent($event, $userRole);
+
+                if ($success) {
+                    header("Location: " . $_SERVER['HTTP_REFERER'] . "?success=event_created");
+                    exit();
+                }
+            } catch (\Exception $e) {
+                die("Erreur lors de la création : " . $e->getMessage());
+            }
+        }
+    }
+
+    public function delete($id)
+    {
+        if ($this->eventService->cancelEvent((int)$id)) {
+            header('Location: /events?deleted=1');
+        }
+    }
+}
