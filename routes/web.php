@@ -36,6 +36,8 @@ $router->get('/dashboard/president/articles', [DashboardController::class, 'pres
 $router->post('/dashboard/president/articles', [ArticlesController::class, 'createArticle']);
 $router->get('/dashboard/president/articles/success', [ArticlesController::class, 'articleSuccess']);
 $router->get('/dashboard/president/articles/failure', [ArticlesController::class, 'articleFailure']);
+$router->get('/dashboard/president/articles/delete/{id}', [ArticlesController::class, 'deleteArticle']);
+$router->post('/dashboard/president/articles/edit', [ArticlesController::class, 'updateArticle']);
 
 // Admin Routes
 $router->get('/dashboard/admin', [AdminController::class, 'admin']);

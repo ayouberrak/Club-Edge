@@ -105,4 +105,15 @@ class ClubService
         return $clubRep->getPotentialPresidents();
     }
 
+    public function getClubByPresident($presidentId)
+    {
+        $clubRep = new ClubRepository();
+        return $clubRep->getClubByPresident($presidentId);
+    }
+
+    public function getClubMembers($clubId)
+    {
+        $clubRep = new ClubRepository();
+        return $clubRep->getClubMembers($clubId);
+    }
 }

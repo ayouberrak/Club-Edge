@@ -101,4 +101,22 @@ class ClubRepository extends GenericRepository
         $stmt = $this->db->query("SELECT id_user, nom FROM users WHERE role != 'admin'");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getClubByPresident($presidentId) {
+        $stmt = $this->db->prepare("SELECT *, (SELECT COUNT(*) FROM club_members WHERE id_club = clubs.id_club) as members_count FROM clubs WHERE id_president = :id_president");
+        $stmt->execute(['id_president' => $presidentId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getClubMembers($clubId) {
+        $stmt = $this->db->prepare("
+            SELECT u.id_user as id, u.nom as name, u.email, u.role
+            FROM users u
+            JOIN club_members cm ON u.id_user = cm.id_user
+            WHERE cm.id_club = :id_club
+            ORDER BY u.role DESC, u.nom ASC
+        ");
+        $stmt->execute(['id_club' => $clubId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

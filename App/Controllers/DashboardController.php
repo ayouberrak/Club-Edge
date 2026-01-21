@@ -8,6 +8,7 @@ use App\Services\ClubService;
 use Core\Controller;
 use App\Services\ArticleServices;
 use App\Repository\StudentRepository;
+use App\Services\EventService;
 
 class DashboardController extends Controller
 {
@@ -81,25 +82,42 @@ class DashboardController extends Controller
 
     public function president()
     {
-
         if(session_status() === PHP_SESSION_NONE) session_start();
-        
         $this->checkAuth('president');
 
-        // President Dashboard Data (Manages Robotics Club)
+        $clubService = new ClubService();
+        $eventService = new EventService();
+        // $this->articleServices is instantiated in constructor
+
+        $club = $clubService->getClubByPresident($_SESSION['user_id']);
+        
+        $members = [];
+        $events = [];
+        $articles = []; // If you plan to use articles in the main dashboard or pass for modals
+
+        if (!$club) {
+            // Handle case where president has no club yet
+            $club = [
+                'name' => 'No Club Assigned',
+                'nom' => 'No Club Assigned', // Alias for view compatibility
+                'members_count' => 0,
+                'max_membres' => 0,
+                'logo' => 'default_club.png' 
+            ];
+        } else {
+            // Ensure aliasing for view compatibility if needed, or rely on view updates
+            // But here I'm passing raw club data mostly.
+            $members = $clubService->getClubMembers($club['id_club']);
+            $events = $eventService->getEventsByClub($club['id_club']);
+            $articles = $this->articleServices->getArticlesByClub($club['id_club']);
+        }
+
+        // President Dashboard Data
         return $this->render('dashboards.president', [
-            'club' => [
-                'name' => 'Robotics Club',
-                'members_count' => 5,
-                'max_members' => 8
-            ],
-            'members' => [
-                ['id' => 1, 'name' => 'Anas Errak', 'email' => 'anas@univ.ma', 'role' => 'President', 'online' => true],
-                ['id' => 2, 'name' => 'John Doe', 'email' => 'john@univ.ma', 'role' => 'Member', 'online' => false],
-                ['id' => 3, 'name' => 'Sara Smith', 'email' => 'sara@univ.ma', 'role' => 'Member', 'online' => true],
-                ['id' => 4, 'name' => 'Ahmed Ali', 'email' => 'ahmed@univ.ma', 'role' => 'Member', 'online' => false],
-                ['id' => 5, 'name' => 'Yassine Kan', 'email' => 'yassine@univ.ma', 'role' => 'Member', 'online' => true],
-            ]
+            'club' => $club,
+            'members' => $members,
+            'events' => $events,
+            'articles' => $articles
         ]);
     }
 

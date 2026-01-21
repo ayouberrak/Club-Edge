@@ -35,6 +35,11 @@ class EventService
         return $this->eventRepository->findAll();
     }
 
+    public function getEventsByClub(int $clubId): array
+    {
+        return $this->eventRepository->findByClub($clubId);
+    }
+
     public function cancelEvent(int $id_event): bool
     {
         return $this->eventRepository->delete($id_event);
