@@ -11,6 +11,13 @@ use PDOException ;
 abstract class GenericRepository
 {
 
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = Database::getInstance()->getConnection();
+    }
+
     private $classes = [
 
     ];
@@ -50,8 +57,7 @@ abstract class GenericRepository
         // exit;
 
         try {
-            $pdo = Database::getInstance()->getConnection();
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
 
             $result = $stmt->fetchALl();
@@ -85,11 +91,10 @@ abstract class GenericRepository
 
         try {
 
-            $pdo = Database::getInstance()->getConnection();
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute(array_values($data));
 
-            $id = $pdo->lastInsertId();
+            $id = $this->db->lastInsertId();
 
             // die ($id) ;  
 
@@ -110,8 +115,7 @@ abstract class GenericRepository
         $sql = "SELECT * FROM $table WHERE $key = ?";
 
         try {
-            $pdo = Database::getInstance()->getConnection();
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute(array_values($id));
 
             $result = $stmt->fetch();
@@ -137,8 +141,7 @@ abstract class GenericRepository
         $sql = "DELETE FROM $table WHERE  $column = ? ";
 
         try {
-            $pdo = Database::getInstance()->getConnection();
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
 
             return $stmt->execute([$iddelete]);
 
@@ -173,8 +176,7 @@ abstract class GenericRepository
 
 
         try {
-            $pdo = Database::getInstance()->getConnection();
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
 
             $stmt->execute($values);
 
