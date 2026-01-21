@@ -10,6 +10,8 @@ class ClubController extends Controller
     {
         if(session_status() === PHP_SESSION_NONE) session_start();
 
+        
+
         return $this->render('clubs.show', [
             'club' => [
                 'id' => $id,

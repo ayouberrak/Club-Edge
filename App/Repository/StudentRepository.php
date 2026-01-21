@@ -25,10 +25,26 @@ class StudentRepository
     }
 
     public function getRegisteredEvents(int $userId) {
-        $stmt1 = $this->db->prepare("SELECT e.* FROM events e
-                                    JOIN participations p ON e.id_event = p.id_event
-                                    WHERE p.id_user = :id_user AND e.date_event >= CURRENT_DATE
-        ");
+       $stmt1 = $this->db->prepare("
+                                SELECT 
+                                    e.id_event as id,
+                                    e.titre as title, 
+                                    e.date_event as date, 
+                                    e.lieu as location,
+                                    CASE 
+                                        WHEN e.date_event < CURRENT_TIMESTAMP THEN 'completed' 
+                                        ELSE 'upcoming' 
+                                    END as status,
+                                    CASE 
+                                        WHEN av.id_avis IS NOT NULL THEN 1 
+                                        ELSE 0 
+                                    END as reviewed
+                                FROM events e
+                                JOIN participations p ON e.id_event = p.id_event
+                                LEFT JOIN avis av ON (e.id_event = av.id_event AND p.id_user = av.id_user)
+                                WHERE p.id_user = :id_user
+                                ORDER BY e.date_event DESC
+                            ");
         $stmt1->execute(['id_user' => $userId]);
         return $stmt1->fetchAll(PDO::FETCH_ASSOC);
     }

@@ -20,14 +20,19 @@ class DashboardController extends Controller
     }
 
     private function checkAuth($role = null) {
+
         if(!isset($_SESSION['user_id'])) {
             header('Location: ' . $this->view->shared('base_url') . '/login');
             exit;
         }
-        if($role && $_SESSION['user_role'] !== $role) {
-            header('Location: ' . $this->view->shared('base_url') . '/dashboard');
-            exit; 
+
+        if(!$role !== null) {
+            if($_SESSION['user_role'] !== $role) {
+                header('Location: ' . $this->view->shared('base_url') . '/dashboard');
+                exit; 
+            }
         }
+
     }
 
     public function index()
@@ -58,7 +63,7 @@ class DashboardController extends Controller
         return $this->render('dashboards.student.events', [
             'registered_events' => $repo->getRegisteredEvents($userId)
         ]);
-    }
+    }   
 
     public function studentArticles()
     {
@@ -77,10 +82,7 @@ class DashboardController extends Controller
 
         if(session_status() === PHP_SESSION_NONE) session_start();
         
-        if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'president') {
-            header('Location: '. $this->view->shared('base_url') . '/dashboard');
-            exit;
-        }
+        $this->checkAuth('president');
 
         // President Dashboard Data (Manages Robotics Club)
         return $this->render('dashboards.president', [
@@ -123,10 +125,7 @@ class DashboardController extends Controller
 
         if(session_status() === PHP_SESSION_NONE) session_start();
         
-        if(!isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'admin') {
-            header('Location: '. $this->view->shared('base_url') . '/dashboard');
-            exit;
-        }
+        $this->checkAuth('admin');
     
         // Admin Dashboard Data
         return $this->render('dashboards.admin', [
