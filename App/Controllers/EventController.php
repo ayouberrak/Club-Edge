@@ -18,33 +18,33 @@ class EventController extends Controller
         $this->eventService = new EventService();
     }
 
-/* affiche les evenment à venir */
+    /* affiche les evenment à venir */
     public function index()
-{
-    $allEvents = $this->eventService->getAllEvents();
-    $now = time();
+    {
+        $allEvents = $this->eventService->getAllEvents();
+        $now = time();
 
-    // Filtrer les événements à venir
-    $upcomingEvents = array_filter($allEvents, function($event) use ($now) {
-        return strtotime($event['date']) >= $now;
-    });
+        // Filtrer les événements à venir
+        $upcomingEvents = array_filter($allEvents, function ($event) use ($now) {
+            return strtotime($event['date']) >= $now;
+        });
 
-    // Filtrer les événements passés
-    $pastEvents = array_filter($allEvents, function($event) use ($now) {
-        return strtotime($event['date']) < $now;
-    });
+        // Filtrer les événements passés
+        $pastEvents = array_filter($allEvents, function ($event) use ($now) {
+            return strtotime($event['date']) < $now;
+        });
 
-    return $this->render('dashboards.president.events', [
-        'upcomingEvents' => $upcomingEvents,
-        'pastEvents' => $pastEvents,
-        'club' => [
-            'id' => 1,
-            'name' => 'Robotics Club',
-            'members_count' => 12,
-            'max_members' => 20
-        ]
-    ]);
-}
+        return $this->render('dashboards.president.events', [
+            'upcomingEvents' => $upcomingEvents,
+            'pastEvents' => $pastEvents,
+            'club' => [
+                'id' => 1,
+                'name' => 'Robotics Club',
+                'members_count' => 12,
+                'max_members' => 20
+            ]
+        ]);
+    }
 
     public function store()
     {
@@ -53,7 +53,7 @@ class EventController extends Controller
             $description = $_POST['description'] ?? '';
             $date_event = $_POST['date_event'] ?? '';
             $lieu = $_POST['lieu'] ?? '';
-            $id_club = isset($_POST['id_club']) ? (int)$_POST['id_club'] : 0;
+            $id_club = isset($_POST['id_club']) ? (int) $_POST['id_club'] : 0;
 
 
             $imageName = null;
@@ -97,7 +97,7 @@ class EventController extends Controller
 
     public function delete($id)
     {
-        if ($this->eventService->cancelEvent((int)$id)) {
+        if ($this->eventService->cancelEvent((int) $id)) {
             header('Location: /events?deleted=1');
         }
     }
