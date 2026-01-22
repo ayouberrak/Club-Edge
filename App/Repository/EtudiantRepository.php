@@ -141,7 +141,6 @@ class EtudiantRepository
                     LEFT JOIN clubs c ON cm.id_club = c.id_club 
                     WHERE u.role != 'admin' AND u.role != 'president'"; // Assuming we want students only? Or all non-admins? View says 'Student Directory'
             
-
             $stmt = $this->db->query("SELECT u.id_user as id, u.nom as name, u.email, COALESCE(c.nom, 'None') as club 
                                       FROM users u 
                                       LEFT JOIN club_members cm ON u.id_user = cm.id_user 

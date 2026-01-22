@@ -56,37 +56,30 @@ class ArticleRepository
         return null;
     }
 
-    public function getArticlebyClub(int $id_club): ?array
-    {
-        $sql = "SELECT 
-                    a.id_article as id,
-                    a.contenu as content,
-                    a.image_article as image,
-                    e.titre as event_title,
-                    e.date_event as event_date,
-                    a.date_creation as published_date 
-                FROM articles a
-                JOIN events e ON a.id_event = e.id_event
-                WHERE e.id_club = :id_club
-                ORDER BY a.date_creation DESC"; 
-            
-        $sql = "SELECT 
-                    a.id_article as id,
-                    a.contenu as content,
-                    a.image_article as image,
-                    a.id_event, 
-                    e.titre as title, 
-                    e.date_event as date
-                FROM articles a
-                JOIN events e ON a.id_event = e.id_event
-                WHERE e.id_club = :id_club
-                ORDER BY e.date_event DESC";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':id_club', $id_club);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    public function getArticlebyClub(int $id_club): array
+{
+    $sql = "SELECT 
+                a.id_article as id,
+                a.contenu as content,
+                a.image_article as image,
+                e.titre as title, 
+                e.date_event as date,
+                u.nom as author -- On récupère le nom de l'utilisateur (président)
+            FROM articles a
+            JOIN events e ON a.id_event = e.id_event
+            JOIN clubs c ON e.id_club = c.id_club
+            LEFT JOIN users u ON c.id_president = u.id_user
+            WHERE e.id_club = :id_club
+            ORDER BY e.date_event DESC";
+
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->bindValue(':id_club', $id_club, \PDO::PARAM_INT);
+    $stmt->execute();
+    
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+}
     
     public function deleteArticle(int $id): bool
     {

@@ -93,9 +93,8 @@ class ClubService
 
         $clubrep = new ClubRepository();
 
-        $idClub = ['id_club' => $id];
 
-        return $clubrep->findbyid($idClub);
+        return $clubrep->findClub($id);
 
     }
 

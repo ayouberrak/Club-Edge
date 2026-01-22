@@ -104,7 +104,7 @@ class AdminController extends Controller
 
         $articleRepo = new ArticleRepository();
         $eventRepo = new EventRepository();
-
+        
         // Admin Dashboard Data
         return $this->render('dashboards.admin', [
             'stats' => [
