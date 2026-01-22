@@ -1,11 +1,16 @@
 <?php
 
-namespace core;
+namespace Core;
 
-use core\AppException ;
-use core\Logger;
+use Core\AppException ;
+use Core\Logger;
 use Throwable;
 use ErrorException;
+
+// $env = parse_ini_file(__DIR__ .'/../.env');
+
+// define('APP_DEBUG' , $env[])
+// echo $env['APP_DEBUG'] ; 
 
 
 class ErrorHandler
@@ -117,7 +122,6 @@ class ErrorHandler
 
     private static function isDebug(): bool
     {
-        return isset($_ENV['APP_DEBUG']) &&
-            strtolower($_ENV['APP_DEBUG']) === 'true';
+        return isset($_ENV['APP_DEBUG']) ;
     }
 }

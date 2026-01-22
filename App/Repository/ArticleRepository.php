@@ -53,23 +53,70 @@ class ArticleRepository
 
     public function getArticlebyClub(int $id_club): ?array
     {
-        $sql = "SELECT a.* FROM articles a
+        $sql = "SELECT 
+                    a.id_article as id,
+                    a.contenu as content,
+                    a.image_article as image,
+                    e.titre as event_title,
+                    e.date_event as event_date,
+                    a.date_creation as published_date -- Assuming this column exists, or we use event date
+                FROM articles a
                 JOIN events e ON a.id_event = e.id_event
-                WHERE e.id_club = :id_club";
+                WHERE e.id_club = :id_club
+                ORDER BY a.date_creation DESC"; // Assuming date_creation exists
+        
+        // If date_creation doesn't exist, we might need to check schema. 
+        // For now let's assume it doesn't and just order by id or event date.
+        // Actually, let's check if date_creation exists. 
+        // Previous INSERT didn't show it. Likely timestamp default?
+        // Let's stick to safe columns for now.
+        
+        $sql = "SELECT 
+                    a.id_article as id,
+                    a.contenu as content,
+                    a.image_article as image,
+                    a.id_event, -- Needed for edit
+                    e.titre as title, -- Article title = Event title for now as we don't have article title
+                    e.date_event as date
+                FROM articles a
+                JOIN events e ON a.id_event = e.id_event
+                WHERE e.id_club = :id_club
+                ORDER BY e.date_event DESC";
+
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindParam(':id_club', $id_club);
         $stmt->execute();
-        $articlesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $articles = [];
-        foreach ($articlesData as $article) {
-            $articles[] = new Article(
-                $article['id_article'],
-                $article['contenu'],
-                $article['id_event'],
-                $article['image_article'],
-            );
-        }
-        return $articles;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
+    public function deleteArticle(int $id): bool
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM articles WHERE id_article = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    public function updateArticle(Article $article): bool
+    {
+        $sql = "UPDATE articles SET contenu = :contenu";
+        if ($article->getImageArticle()) {
+            $sql .= ", image_article = :image_article";
+        }
+        $sql .= " WHERE id_article = :id_article";
+        
+        $stmt = $this->pdo->prepare($sql);
+
+        $contenu = $article->getContenu();
+        $id = $article->getIdArticle();
+
+        $stmt->bindParam(':contenu', $contenu);
+        $stmt->bindParam(':id_article', $id, PDO::PARAM_INT);
+        
+        if ($article->getImageArticle()) {
+            $image = $article->getImageArticle();
+            $stmt->bindParam(':image_article', $image);
+        }
+
+        return $stmt->execute();
+    }
 }

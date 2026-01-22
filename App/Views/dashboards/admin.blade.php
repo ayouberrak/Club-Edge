@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
+
 <div class="py-10 flex flex-col lg:flex-row gap-8" x-data="{ 
     activeSection: 'clubs', 
     showClubModal: false, 
@@ -58,42 +59,50 @@
             <div class="glass p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-blue-500/5 to-transparent">
                 <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Clubs</div>
                 <div class="text-3xl font-bold flex items-center">
-                    {{ $stats['total_clubs'] }}
+                    {{ $stats['total_clubs'] ?? 0 }}
                     <span class="ml-2 text-[10px] text-green-400">+1 new</span>
                 </div>
             </div>
             <div class="glass p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-indigo-500/5 to-transparent">
                 <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Users</div>
-                <div class="text-3xl font-bold">{{ $stats['total_students'] }}</div>
+                <div class="text-3xl font-bold">{{ $stats['total_students'] ?? 0 }}</div>
             </div>
             <div class="glass p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-yellow-500/5 to-transparent">
                 <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Reviews</div>
-                <div class="text-3xl font-bold text-yellow-500">{{ $stats['pending_reviews'] }}</div>
+                <div class="text-3xl font-bold text-yellow-500">{{ $stats['pending_reviews'] ?? 0 }}</div>
             </div>
             <div class="glass p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-green-500/5 to-transparent">
                 <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Active Events</div>
-                <div class="text-3xl font-bold text-green-500">{{ $stats['active_events'] }}</div>
+                <div class="text-3xl font-bold text-green-500">{{ $stats['active_events'] ?? 0 }}</div>
             </div>
         </div>
 
         <!-- Section: Manage Clubs -->
         <div x-show="activeSection === 'clubs'" class="space-y-6 animate-fadeIn">
             <div class="flex justify-between items-end">
-                <h2 class="text-3xl font-bold">Platform Clubs <span class="text-slate-500 text-lg">({{ count($clubs) }})</span></h2>
+                <h2 class="text-3xl font-bold">Platform Clubs <span class="text-slate-500 text-lg">({{ count($clubs ?? []) }})</span></h2>
                 <div class="text-xs text-slate-500 italic">Target: 4-6 clubs per establishment</div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                @foreach($clubs as $club)
-                <div class="glass p-6 rounded-3xl border border-slate-800 relative overflow-hidden group hover:border-blue-500/40 transition-all cursor-pointer" onclick="window.location.href='{{ $base_url }}/dashboard/admin/club/{{ $club['id'] }}'">
-                    <div class="flex justify-between items-start mb-8 relative z-10">
-                        <div>
-                            <h3 class="text-xl font-bold leading-tight group-hover:text-blue-400 transition-colors">{{ $club['name'] }}</h3>
-                            <p class="text-xs text-slate-500 mt-1 uppercase tracking-tighter">President: <span class="text-slate-300 font-bold">{{ $club['president'] }}</span></p>
+                @foreach($clubs ?? [] as $club)
+                <div class="glass p-6 rounded-3xl border border-slate-800 relative overflow-hidden group hover:border-blue-500/40 transition-all cursor-pointer" onclick="window.location.href='{{ $base_url }}/dashboard/admin/club/{{ $club['id_club'] }}'">
+                    <div class="flex justify-between items-start mb-6 relative z-10">
+                        <div class="flex items-start gap-4">
+                            <div class="relative shrink-0">
+                                <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-slate-700 shadow-lg group-hover:border-blue-500/50 transition-colors">
+                                    <img src="{{ $base_url }}/public/assets/img/{{ $club['image_url'] }}" alt="{{ $club['nom'] }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                                </div>
+                                <div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-slate-900 {{ ($club['club_members'] >= $club['max_membres'] && $club['max_membres'] > 0) ? 'bg-red-500' : 'bg-green-500' }}"></div>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold leading-tight group-hover:text-blue-400 transition-colors">{{ $club['nom'] }}</h3>
+                                <p class="text-xs text-slate-500 mt-1 uppercase tracking-tighter">President: <span class="{{ $club['id_president'] ? 'text-slate-300' : 'text-yellow-500' }} font-bold">{{ $club['president'] ?? 'Not Assigned' }}</span></p>
+                            </div>
                         </div>
                         <div class="flex gap-2" @click.stop>
-                            <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:text-white transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
-                            <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-red-600 hover:text-white transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                            <button type="button" class="formunlleModifier w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:text-white transition-all" data-clubid="{{ $club['id_club'] }}"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
+                            <a href="{{ $base_url }}/dashboard/admin/club/delete/{{ $club['id_club'] }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 hover:bg-red-600 hover:text-white transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></a>
                         </div>
                     </div>
                     
@@ -101,19 +110,17 @@
                         <div class="space-y-2">
                             <div class="flex justify-between text-xs font-bold uppercase tracking-widest text-slate-500">
                                 <span>Members Capacity</span>
-                                <span class="{{ $club['members'] >= $club['capacity'] ? 'text-red-400' : 'text-blue-400' }}">{{ $club['members'] }} / {{ $club['capacity'] }}</span>
+                                <span class="{{ ($club['club_members'] >= $club['max_membres'] && $club['max_membres'] > 0) ? 'text-red-400' : 'text-blue-400' }}">{{ $club['club_members'] }} / {{ $club['max_membres'] }}</span>
                             </div>
                             <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden flex">
-                                <div class="h-full {{ $club['status'] === 'full' ? 'bg-red-500' : 'bg-blue-500' }}" style="width: {{ ($club['members'] / $club['capacity']) * 100 }}%"></div>
+                                <div class="h-full {{ ($club['club_members'] >= $club['max_membres'] && $club['max_membres'] > 0) ? 'bg-red-500' : 'bg-blue-500' }}" style="width: {{ ($club['max_membres'] > 0) ? ($club['club_members'] / $club['max_membres'] * 100) : 0 }}%"></div>
                             </div>
                         </div>
-                        <div class="flex justify-end">
-                            <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest group-hover:translate-x-1 transition-transform">View Full Profile →</span>
+                        <div class="flex justify-between items-center mt-4 border-t border-slate-800 pt-3">
+                            <span class="text-[10px] text-slate-500">Created: {{ $club['created_at'] ?? '2024' }}</span>
+                            <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest group-hover:translate-x-1 transition-transform">View Profile →</span>
                         </div>
                     </div>
-                    
-                    <!-- Decorative BG -->
-                    <div class="absolute top-0 right-0 -mr-10 -mt-10 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/10 transition-colors"></div>
                 </div>
                 @endforeach
             </div>
@@ -128,7 +135,7 @@
                     <button class="bg-blue-600 p-2 rounded-lg text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
                 </div>
             </div>
-            
+
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
@@ -140,7 +147,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800/50">
-                        @foreach($students as $student)
+                        @foreach($students ?? [] as $student)
                         <tr class="hover:bg-slate-800/30 transition-colors group">
                             <td class="py-6">
                                 <div class="flex items-center space-x-3">
@@ -162,7 +169,7 @@
                             <td class="py-6">
                                 <div class="flex items-center space-x-4">
                                     <button @click="$dispatch('toast', { message: 'Student profile updated', type: 'success' })" class="text-blue-400 hover:underline text-xs font-bold uppercase tracking-widest">Edit</button>
-                                    <button @click="$dispatch('toast', { message: 'Student banned from platform', type: 'error' })" class="text-red-900 font-bold text-xs uppercase hover:text-red-500 transition-colors">Ban</button>
+                                    <a href="{{ $base_url }}/dashboard/admin/student/delete/{{ $student['id'] }}" onclick="return confirm('Are you sure you want to ban/delete this student?');" class="text-red-900 font-bold text-xs uppercase hover:text-red-500 transition-colors">Ban</a>
                                 </div>
                             </td>
                         </tr>
@@ -181,16 +188,6 @@
                     <span class="text-slate-500 mr-4">{{ date('H:i:s') }}</span>
                     <span>Admin connected from 192.168.1.1</span>
                 </div>
-                <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center">
-                    <span class="text-green-500 mr-4">[SUCCESS]</span>
-                    <span class="text-slate-500 mr-4">{{ date('H:i:s', strtotime('-5 mins')) }}</span>
-                    <span>New club "Gaming Hub" successfully created.</span>
-                </div>
-                <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center">
-                    <span class="text-yellow-500 mr-4">[WARNING]</span>
-                    <span class="text-slate-500 mr-4">{{ date('H:i:s', strtotime('-12 mins')) }}</span>
-                    <span>Suspicious login attempt for user #102.</span>
-                </div>
             </div>
         </div>
     </main>
@@ -200,26 +197,145 @@
         <div class="glass w-full max-w-lg p-10 rounded-[2.5rem] border border-blue-500/30 shadow-[0_0_50px_rgba(37,99,235,0.1)]" @click.away="showClubModal = false">
             <h2 class="text-3xl font-black text-white mb-2 leading-none uppercase tracking-tighter">Initialize Club</h2>
             <p class="text-slate-500 text-sm mb-10">Assign a new department to the establishment.</p>
-            
-            <form class="space-y-6">
+
+            <form class="space-y-4" method="post" action="{{ $base_url }}/dashboard/admin/club/create" enctype="multipart/form-data">
                 <div>
-                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-3">Club Designation</label>
-                    <input type="text" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:border-blue-500 focus:outline-none transition-all" placeholder="e.g. AI Research Center">
+                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Club Designation</label>
+                    <input type="text" name="nom" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm" placeholder="e.g. AI Research Center" required maxlength="100">
                 </div>
+
                 <div>
-                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-3">Mission Statement</label>
-                    <textarea class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-5 py-4 text-white text-sm h-32 focus:border-blue-500 focus:outline-none transition-all placeholder:italic" placeholder="Define the club's main objective..."></textarea>
+                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Mission Statement</label>
+                    <textarea name="description" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white text-sm h-24 focus:border-blue-500 focus:outline-none transition-all placeholder:italic resize-none" placeholder="Define the club's main objective..."></textarea>
                 </div>
-                <div class="flex gap-4">
-                    <button type="button" @click="showClubModal = false" class="flex-1 py-4 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">Cancel</button>
-                    <button type="button" @click="showClubModal = false; $dispatch('toast', { message: 'Club initialized successfully', type: 'success' })" class="flex-[2] bg-blue-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-lg shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all">Confirm Activation</button>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Max Members</label>
+                        <input type="number" name="max_membres" value="8" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm" required min="6" max="8">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">President</label>
+                        <select name="id_president" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all appearance-none cursor-pointer text-sm">
+                            <option value="" class="bg-slate-900">Select...</option>
+                            @foreach($potentialPresidents ?? [] as $user)
+                            <option value="{{ $user['id_user'] }}" class="bg-slate-900">{{ $user['nom'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Club Image</label>
+                    <input type="file" name="image_url" accept="image/*" class="hidden" id="clubImageInput">
+                    <label for="clubImageInput" class="flex items-center justify-center w-full bg-slate-900/50 border-2 border-slate-800 border-dashed rounded-2xl px-4 py-5 text-slate-500 font-bold cursor-pointer hover:border-blue-500 transition-all group">
+                        <div class="text-center">
+                            <svg class="w-8 h-8 mx-auto mb-2 text-slate-600 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span class="text-xs uppercase tracking-wider">Upload Image</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" @click="showClubModal = false" class="flex-1 py-3 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">Cancel</button>
+                    <button type="submit" class="flex-[2] bg-blue-600 py-3 rounded-2xl font-black text-white uppercase tracking-widest text-sm shadow-lg shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all">Confirm Activation</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<!-- Modal Modify Club -->
+<div id="modifyClubModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md">
+    <div class="glass w-full max-w-lg p-10 rounded-[2.5rem] border border-blue-500/30 shadow-[0_0_50px_rgba(37,99,235,0.1)]">
+        <h2 class="text-3xl font-black text-white mb-2 leading-none uppercase tracking-tighter">Modify Club</h2>
+        <p class="text-slate-500 text-sm mb-10">Update club information.</p>
+
+        <form id="modifyClubForm" class="space-y-4" enctype="multipart/form-data" method="post" action="{{ $base_url }}/dashboard/admin/club/update">
+            <input type="hidden" name="id" id="club_id">
+            <div>
+                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Club Designation</label>
+                <input type="text" name="nom" id="club_nom" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm" required maxlength="100">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Mission Statement</label>
+                <textarea name="description" id="club_description" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white text-sm h-24 focus:border-blue-500 focus:outline-none transition-all resize-none"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Max Members</label>
+                    <input type="number" name="max_membres" id="club_max" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all text-sm" min="6" max="8">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">President</label>
+                    <select name="id_president" id="club_president" class="w-full bg-slate-900/50 border-2 border-slate-800 rounded-2xl px-4 py-3 text-white font-bold focus:border-blue-500 focus:outline-none transition-all appearance-none cursor-pointer text-sm">
+                        <option value="">Select...</option>
+                        @foreach($potentialPresidents ?? [] as $user)
+                        <option value="{{ $user['id_user'] }}" class="bg-slate-900">{{ $user['nom'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Club Image</label>
+                <input type="file" name="image_url" accept="image/*" class="hidden" id="clubImageInputmodifier">
+                <label for="clubImageInputmodifier" class="flex items-center justify-center w-full bg-slate-900/50 border-2 border-slate-800 border-dashed rounded-2xl px-4 py-5 text-slate-500 font-bold cursor-pointer hover:border-blue-500 transition-all">Upload New Image</label>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button type="button" id="closeModalBtn" class="flex-1 py-3 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">Cancel</button>
+                <button type="submit" class="flex-[2] bg-blue-600 py-3 rounded-2xl font-black text-white uppercase tracking-widest text-sm shadow-lg shadow-blue-600/30 hover:scale-[1.02] transition-all">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let modificationBtns = document.querySelectorAll('.formunlleModifier');
+        const modal = document.getElementById('modifyClubModal');
+
+        modificationBtns.forEach(ele => {
+            ele.addEventListener('click', (e) => {
+                const clubid = e.currentTarget.dataset.clubid;
+                // alert('Fetching data for club: ' + clubid); // Debug
+                fetch(`{{ $base_url }}/dashboard/admin/club/edit/${clubid}`)
+                    .then(rep => {
+                        if (!rep.ok) throw new Error('Network response was not ok');
+                        return rep.json();
+                    })
+                    .then(data => {
+                        openModifyModal(data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error loading club data. Please check logs.');
+                    });
+            });
+        });
+
+        function openModifyModal(clubData) {
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+            document.getElementById('club_id').value = clubData.id_club || '';
+            document.getElementById('club_nom').value = clubData.nom || '';
+            document.getElementById('club_description').value = clubData.description || '';
+            document.getElementById('club_max').value = clubData.max_membres || '';
+            document.getElementById('club_president').value = clubData.id_president || '';
+        }
+
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            modal.style.display = 'none';
+            modal.classList.add('hidden');
+        });
+    });
+</script>
+
 <style>
     [x-cloak] { display: none !important; }
     .animate-fadeIn { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -228,4 +344,5 @@
         to { opacity: 1; transform: scale(1) translateY(0); }
     }
 </style>
+
 @endsection

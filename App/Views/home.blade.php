@@ -1,4 +1,4 @@
-@extends('layouts.main')
+    @extends('layouts.main')
 
 @section('content')
 <div x-data="{ activeCategory: 'all', 
@@ -73,18 +73,15 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             @foreach($clubs as $club)
-            <div x-show="activeCategory === 'all' || activeCategory === '{{ $club['category'] }}'" 
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 scale-90"
-                 x-transition:enter-end="opacity-100 scale-100"
+            <div 
                  class="group relative bg-[#0f172a]/40 rounded-[3.5rem] p-6 border border-white/5 hover:border-indigo-500/30 transition-all duration-500 overflow-hidden shadow-2xl">
                 
                 <!-- Image Container -->
                 <div class="relative h-72 w-full rounded-[2.8rem] overflow-hidden mb-8">
-                    <img src="{{ $club['image'] }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                    <img src="{{ $club['image_url'] }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent"></div>
                     
-                    <!-- Status Badge -->
+                    <!-- Status Badge -->   
                     <div class="absolute top-6 left-6">
                         <div class="px-4 py-2 glass rounded-2xl border-white/10 flex items-center space-x-2">
                             <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -95,7 +92,7 @@
                     <!-- Established Badge -->
                     <div class="absolute top-6 right-6">
                         <div class="px-4 py-2 glass rounded-2xl border-white/10">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Est. {{ $club['established_at'] }}</span>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Est. {{ $club['created_at'] ?? '2024' }}</span>
                         </div>
                     </div>
                 </div>
@@ -104,7 +101,7 @@
                 <div class="space-y-6 px-4 pb-4">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-3xl font-black text-white leading-none tracking-tight mb-2 group-hover:text-indigo-400 transition-colors">{{ $club['name'] }}</h3>
+                            <h3 class="text-3xl font-black text-white leading-none tracking-tight mb-2 group-hover:text-indigo-400 transition-colors">{{ $club['nom'] }}</h3>
                             <div class="flex items-center text-slate-500 text-xs font-bold uppercase tracking-widest space-x-2">
                                 <svg class="w-4 h-4 text-indigo-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
                                 <span>{{ $club['president'] }}</span>
@@ -128,10 +125,10 @@
                                 <div class="w-10 h-10 rounded-full border-2 border-[#020617] bg-emerald-600 flex items-center justify-center font-black text-[10px] text-white">SA</div>
                                 <div class="w-10 h-10 rounded-full border-2 border-[#020617] bg-purple-600 flex items-center justify-center font-black text-[10px] text-white">AE</div>
                             </div>
-                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ $club['members_count'] }} Joined</span>
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ $club['club_members'] }} Joined</span>
                         </div>
                         
-                        <a href="{{ $base_url }}/club/{{ $club['id'] }}" class="flex items-center space-x-3 bg-white/5 px-6 py-3 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-colors border border-white/5">
+                        <a href="{{ $base_url }}/club/{{ $club['id_club'] }}" class="flex items-center space-x-3 bg-white/5 px-6 py-3 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-colors border border-white/5">
                             <span>Details</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </a>

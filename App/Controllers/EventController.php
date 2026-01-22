@@ -15,10 +15,7 @@ class EventController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $dbInstance = Database::getInstance();
-        $pdo = $dbInstance->getConnection();
-        $eventRepository = new EventRepository($pdo);
-        $this->eventService = new EventService($eventRepository);
+        $this->eventService = new EventService();
     }
 
 /* affiche les evenment à venir */

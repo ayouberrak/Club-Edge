@@ -1,2 +1,6 @@
-// Validation JS
-console.log('Validation loaded');
+
+
+let modufucation = document.querySelectorAll('#formunlleModifier') ;
+
+console.log(modufucation) ; 
+

@@ -2,6 +2,7 @@
 
 use App\Controllers\ArticlesController;
 use App\Controllers\EtudiantController;
+use App\Controllers\AdminController;
 use Core\Router;
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
@@ -28,28 +29,31 @@ $router->get('/dashboard', [DashboardController::class, 'index']); // Student Ov
 $router->get('/dashboard/events', [DashboardController::class, 'studentEvents']);
 $router->get('/dashboard/articles', [DashboardController::class, 'studentArticles']);
 
-$router->get('/dashboard/president/events', [DashboardController::class, 'presidentEvents']);
-
+// President Routes
+$router->get('/dashboard/president', [DashboardController::class, 'president']);
 $router->get('/dashboard/president/events', [EventController::class, 'index']);
-$router->post('/dashboard/president/events', [ArticlesController::class, 'createArticle']);
-
+$router->get('/dashboard/president/articles', [DashboardController::class, 'presidentArticles']);
+$router->post('/dashboard/president/articles', [ArticlesController::class, 'createArticle']);
 $router->get('/dashboard/president/articles/success', [ArticlesController::class, 'articleSuccess']);
 $router->get('/dashboard/president/articles/failure', [ArticlesController::class, 'articleFailure']);
+$router->get('/dashboard/president/articles/delete/{id}', [ArticlesController::class, 'deleteArticle']);
+$router->post('/dashboard/president/articles/edit', [ArticlesController::class, 'updateArticle']);
 
-
-$router->get('/dashboard/president', [DashboardController::class, 'president']); // President Members
-$router->get('/dashboard/president', [EtudiantController::class, 'index']); // President Members
-
-
-/* creer un evenement */
-$router->post('/events/store', [EventController::class, 'store']);
-$router->get('/dashboard/president/articles', [DashboardController::class, 'presidentArticles']);
-
-$router->get('/dashboard/admin', [DashboardController::class, 'admin']); // Admin Clubs
+// Admin Routes
+$router->get('/dashboard/admin', [AdminController::class, 'admin']);
 $router->get('/dashboard/admin/students', [DashboardController::class, 'adminStudents']);
 $router->get('/dashboard/admin/logs', [DashboardController::class, 'adminLogs']);
 $router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
+$router->get('/dashboard/admin/student/delete/{id}', [AdminController::class, 'deleteStudent']);
 
-/* test recuperation detaills de club */
-$router->get('/dashboard/admin/club', [ClubController::class, 'testClubDetails']);
+// Club Management (Admin)
+$router->post('/dashboard/admin/club/create', [AdminController::class, 'createClub']);
+$router->get('/dashboard/admin/club/delete/{id}', [AdminController::class, 'deleteclub']);
+$router->get('/dashboard/admin/club/edit/{id}', [AdminController::class, 'modifierclub']);
+$router->post('/dashboard/admin/club/update', [AdminController::class, 'clubaupdate']);
+
+// Global Actions
+$router->post('/events/store', [EventController::class, 'store']);
+$router->get('/club/{id}', [ClubController::class, 'show']);
+
 $router->dispatch();

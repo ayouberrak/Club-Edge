@@ -10,9 +10,9 @@ class EventService
 {
     private  EventRepository $eventRepository;
 
-    public function __construct(EventRepository $eventRepository)
+    public function __construct()
     {
-        $this->eventRepository = $eventRepository;
+        $this->eventRepository = new EventRepository();
     }
 
 
@@ -33,6 +33,11 @@ class EventService
     public function getAllEvents(): array
     {
         return $this->eventRepository->findAll();
+    }
+
+    public function getEventsByClub(int $clubId): array
+    {
+        return $this->eventRepository->findByClub($clubId);
     }
 
     public function cancelEvent(int $id_event): bool

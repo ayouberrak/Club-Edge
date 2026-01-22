@@ -10,8 +10,7 @@ class ClubController extends Controller
 {
     public function testClubDetails()
 {
-    $db = Database::getInstance()->getConnection();
-    $eventRepo = new EventRepository($db);
+    $eventRepo = new EventRepository();
 
     $events = $eventRepo->findByClub();
 
@@ -31,6 +30,8 @@ class ClubController extends Controller
     public function show($id)
     {
         if(session_status() === PHP_SESSION_NONE) session_start();
+
+        
 
         return $this->render('clubs.show', [
             'club' => [
