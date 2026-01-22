@@ -8,7 +8,7 @@ use App\Repository\EventRepository;
 
 class EventService
 {
-    private  EventRepository $eventRepository;
+    private EventRepository $eventRepository;
 
     public function __construct()
     {
@@ -43,5 +43,24 @@ class EventService
     public function cancelEvent(int $id_event): bool
     {
         return $this->eventRepository->delete($id_event);
+    }
+
+    public function registerStudentToEvent(int $eventId, int $userId): bool
+    {
+        if ($this->isStudentRegistered($eventId, $userId)) {
+            return false;
+        }
+
+        return $this->eventRepository->registerParticipation($eventId, $userId);
+    }
+
+    public function isStudentRegistered(int $eventId, int $userId): bool
+    {
+        return $this->eventRepository->isUserRegistered($eventId, $userId);
+    }
+
+    public function cancelStudentParticipation(int $eventId, int $userId): bool
+    {
+        return $this->eventRepository->deleteParticipation($eventId, $userId);
     }
 }

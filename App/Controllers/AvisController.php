@@ -1,39 +1,47 @@
 <?php 
 
-
-
 namespace App\Controllers;
 
 use App\Services\AvisService;
+use Core\Controller;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
-class  AvisController {
+class AvisController extends Controller {
 
     public function addAvis($data) {
-        $CommentData = [
-            'note' => $_POST['note'] , 
-            'commentaire' => $_POST['commentaire'] , 
-            'id_user' => $_POST['id_user'] , // modifier to get from session
-            'id_event' => $_POST['id_event'] 
-        ] ;
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $baseUrl = $this->view->shared('base_url');
 
-        $avisServ = new AvisService() ; 
-        $message = $avisServ -> addAvis($CommentData) ; 
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . $baseUrl . '/login');
+            exit;
+        }
 
-        var_dump($message) ; 
+        $redirectPath = $data['redirect_to'] ?? '/dashboard/events';
+
+        // CSRF Check
+        if (!isset($data['csrf_token']) || $data['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
+            header('Location: ' . $baseUrl . $redirectPath . (strpos($redirectPath, '?') !== false ? '&' : '?') . 'error=csrf_error');
+            exit;
+        }
+
+        $commentData = [
+            'note' => (int)($data['note'] ?? 0),
+            'commentaire' => $data['commentaire'] ?? '',
+            'id_user' => $_SESSION['user_id'],
+            'id_event' => (int)($data['id_event'] ?? 0)
+        ];
+
+        $avisServ = new AvisService();
+        $result = $avisServ->addAvis($commentData);
+
+        if ($result['success']) {
+            header('Location: ' . $baseUrl . $redirectPath . (strpos($redirectPath, '?') !== false ? '&' : '?') . 'success=' . urlencode('review_added'));
+        } else {
+            header('Location: ' . $baseUrl . $redirectPath . (strpos($redirectPath, '?') !== false ? '&' : '?') . 'error=' . urlencode($result['message']));
+        }
+        exit;
 
     }
 
-
 }
-
-// $avis = new AvisController() ; 
-
-// $data = [
-//     'note' => 4 , 
-//     'commentaire' => 'slm cv ' , 
-//     'id_user' => 6 , 
-//     'id_event' => 3 
-// ] ;
-
-// $avis -> addAvis($data) ; 

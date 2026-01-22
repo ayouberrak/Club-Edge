@@ -7,7 +7,6 @@ use PDO;
 class StudentRepository
 {
     private $db;
-/* // turbo */
     public function __construct()
     {
         $this->db = \Config\Database::getInstance()->getConnection();
@@ -34,14 +33,15 @@ class StudentRepository
                                         WHEN e.date_event < CURRENT_TIMESTAMP THEN 'completed' 
                                         ELSE 'upcoming' 
                                     END as status,
-                                    CASE 
+                                    MAX(CASE 
                                         WHEN av.id_avis IS NOT NULL THEN 1 
                                         ELSE 0 
-                                    END as reviewed
+                                    END) as reviewed
                                 FROM events e
                                 JOIN participations p ON e.id_event = p.id_event
                                 LEFT JOIN avis av ON (e.id_event = av.id_event AND p.id_user = av.id_user)
                                 WHERE p.id_user = :id_user
+                                GROUP BY e.id_event
                                 ORDER BY e.date_event DESC
                             ");
         $stmt1->execute(['id_user' => $userId]);
@@ -54,13 +54,12 @@ class StudentRepository
         return $stmt2->fetchColumn();
     }
 
-    public function getArticles(int $userId) {
-        $stmt = $this->db->prepare("SELECT a.*, e.titre as event_title, c.nom as club_name  FROM articles a
+    public function getArticles() {
+        $stmt = $this->db->prepare("SELECT a.*, e.titre as event_title, c.nom as club_name, e.date_event as date, e.image_event  FROM articles a
                                     JOIN events e ON a.id_event = e.id_event
                                     JOIN clubs c ON e.id_club = c.id_club
-                                    JOIN participations p ON e.id_event = p.id_event
-                                    WHERE p.id_user = :id_user");
-        $stmt->execute(['id_user' => $userId]);
+                                    ORDER BY a.created_at DESC");
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

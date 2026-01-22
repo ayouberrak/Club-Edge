@@ -4,7 +4,7 @@
 <div class="space-y-12 py-10" x-data="{ rsvpDone: false }">
     <div class="glass p-8 md:p-16 rounded-[3rem] border border-slate-700 overflow-hidden relative group">
         <div class="absolute top-0 right-0 w-1/2 h-full opacity-30 pointer-events-none group-hover:scale-110 transition-transform duration-700">
-            <img src="<?php echo e($club['image']); ?>" class="w-full h-full object-cover">
+            <img src="<?php echo e($base_url); ?>/assets/img/<?php echo e($club['image_url']); ?>" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-l from-transparent to-slate-900"></div>
         </div>
         
@@ -18,7 +18,7 @@
                 </div>
             </div>
             
-            <h1 class="text-6xl md:text-7xl font-black text-white mb-6 leading-none tracking-tighter"><?php echo e($club['name']); ?></h1>
+            <h1 class="text-6xl md:text-7xl font-black text-white mb-6 leading-none tracking-tighter"><?php echo e($club['nom']); ?></h1>
             <p class="text-xl text-slate-400 mb-10 leading-relaxed font-medium">
                 <?php echo e($club['description']); ?>
 
@@ -27,12 +27,12 @@
             <div class="flex flex-wrap gap-10 mb-12">
                 <div class="flex items-center space-x-4">
                     <div class="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-blue-400 font-black text-xl shadow-xl shadow-blue-500/5">
-                        <?php echo e(substr($club['president'], 0, 1)); ?>
+                        <?php echo e(substr($club['president'] ?? 'None', 0, 1)); ?>
 
                     </div>
                     <div>
                         <div class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black">President</div>
-                        <div class="text-lg font-bold text-white"><?php echo e($club['president']); ?></div>
+                        <div class="text-lg font-bold text-white"><?php echo e($club['president'] ?? 'To be assigned'); ?></div>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -41,14 +41,34 @@
                     </div>
                     <div>
                         <div class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black">Community</div>
-                        <div class="text-lg font-bold text-white"><?php echo e($club['members_count']); ?> / <?php echo e($club['max_members']); ?> Members</div>
+                        <div class="text-lg font-bold text-white"><?php echo e($club['members_count']); ?> / <?php echo e($club['max_membres']); ?> Members</div>
                     </div>
                 </div>
             </div>
-            
-            <button class="btn-gradient px-12 py-5 rounded-3xl font-black text-lg shadow-2xl shadow-blue-500/20 active:scale-95 transition-transform">
-                Apply for Membership
-            </button>
+
+            <?php if(!isset($_SESSION['user_id'])): ?>
+                <a href="<?php echo e($base_url); ?>/login" class="btn-gradient px-12 py-5 rounded-3xl font-black text-lg inline-block">
+                    Login to Join
+                </a>
+            <?php elseif($user_membership): ?>
+                <?php if($user_membership['id_club'] == $club['id_club']): ?>
+                    <div class="flex items-center space-x-3 px-8 py-4 bg-green-500/10 border border-green-500/30 rounded-2xl text-green-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="font-black uppercase tracking-widest text-sm">You are a member</span>
+                    </div>
+                <?php else: ?>
+                    <div class="px-8 py-4 bg-slate-800 border border-slate-700 rounded-2xl text-slate-400 italic text-sm">
+                        You are already committed to another institution.
+                    </div>
+                <?php endif; ?>
+            <?php else: ?>
+                <form action="<?php echo e($base_url); ?>/club/join" method="POST">
+                    <input type="hidden" name="club_id" value="<?php echo e($club['id_club']); ?>">
+                    <button type="submit" class="btn-gradient px-12 py-5 rounded-3xl font-black text-lg shadow-2xl shadow-blue-500/20 active:scale-95 transition-transform">
+                        Apply for Membership
+                    </button>
+                </form>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -60,14 +80,36 @@
                 <h2 class="text-4xl font-bold text-white">Events Schedule</h2>
                 <div class="h-[2px] flex-grow bg-slate-800"></div>
             </div>
+
+            
+            <?php if(isset($_GET['success']) && $_GET['success'] === 'registered'): ?>
+                <div class="p-4 bg-green-500/10 border border-green-500/20 rounded-2xl text-green-400 text-sm flex items-center animate-fadeIn">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Successfully registered for the event!</span>
+                </div>
+            <?php endif; ?>
+
+            <?php if(isset($_GET['error'])): ?>
+                <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm flex items-center animate-fadeIn">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>
+                        <?php switch($_GET['error']):
+                            case ('csrf_error'): ?> Session expired. Please refresh. <?php break; ?>
+                            <?php case ('already_registered'): ?> You already joined this event. <?php break; ?>
+                            <?php default: ?> Error: <?php echo e(htmlspecialchars($_GET['error'])); ?>
+
+                        <?php endswitch; ?>
+                    </span>
+                </div>
+            <?php endif; ?>
             
             <div class="space-y-6">
                 <?php $__currentLoopData = $events; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $event): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="glass p-8 rounded-[2rem] border border-slate-800 flex flex-col md:flex-row justify-between items-center group hover:bg-slate-800/40 hover:border-blue-500/30 transition-all duration-300">
                     <div class="flex items-center space-x-8 mb-6 md:mb-0">
                         <div class="w-20 h-20 bg-slate-900 rounded-3xl flex flex-col items-center justify-center border border-slate-700 group-hover:border-blue-500/50 transition-colors">
-                            <span class="text-xs font-black text-blue-500 uppercase tracking-widest"><?php echo e($event['month']); ?></span>
-                            <span class="text-3xl font-black text-white leading-tight"><?php echo e($event['day']); ?></span>
+                            <span class="text-xs font-black text-blue-500 uppercase tracking-widest"><?php echo e(date('M', strtotime($event['date']))); ?></span>
+                            <span class="text-3xl font-black text-white leading-tight"><?php echo e(date('d', strtotime($event['date']))); ?></span>
                         </div>
                         <div>
                             <h3 class="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors mb-2"><?php echo e($event['title']); ?></h3>
@@ -78,9 +120,34 @@
                             </div>
                         </div>
                     </div>
-                    <button @click="rsvpDone = true" :class="rsvpDone ? 'bg-green-600 text-white' : 'bg-slate-800 hover:bg-slate-700'" class="px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all">
-                        <span x-text="rsvpDone ? '✓ RSVP Done' : 'Join Event'"></span>
-                    </button>
+                    <?php 
+                        $eventDate = strtotime($event['date']);
+                        $isPast = $eventDate < time();
+                    ?>
+
+                    <?php if($isPast): ?>
+                        <button disabled class="px-10 py-4 bg-slate-800/50 rounded-2xl font-black text-sm uppercase tracking-widest text-slate-500 border border-slate-700 cursor-not-allowed">
+                            Completed
+                        </button>
+                    <?php elseif($event['is_registered'] ?? false): ?>
+                        <form action="<?php echo e($base_url); ?>/event/cancel" method="POST">
+                            <input type="hidden" name="csrf_token" value="<?php echo e($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="event_id" value="<?php echo e($event['id_event'] ?? $event['id']); ?>">
+                            <input type="hidden" name="redirect_to" value="/club/<?php echo e($club['id_club']); ?>">
+                            <button type="submit" class="px-10 py-4 bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all border border-red-500/20">
+                                Cancel RSVP
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <form action="<?php echo e($base_url); ?>/event/register" method="POST">
+                            <input type="hidden" name="csrf_token" value="<?php echo e($_SESSION['csrf_token'] ?? ''); ?>">
+                            <input type="hidden" name="event_id" value="<?php echo e($event['id_event'] ?? $event['id']); ?>">
+                            <input type="hidden" name="redirect_to" value="/club/<?php echo e($club['id_club']); ?>">
+                            <button type="submit" class="px-10 py-4 bg-slate-800 hover:bg-blue-600 hover:text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all">
+                                Join Event
+                            </button>
+                        </form>
+                    <?php endif; ?>
                 </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>

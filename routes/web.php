@@ -9,6 +9,7 @@ use App\Controllers\AuthController;
 use App\Controllers\ClubController;
 use App\Controllers\DashboardController;
 use App\Controllers\EventController;
+use App\Controllers\AvisController;
 
 $router = new Router();
 
@@ -21,17 +22,16 @@ $router->post('/login', [AuthController::class, 'postLogin']);
 $router->get('/logout', [AuthController::class, 'logout']);
 
 // Club Routes
+$router->get('/club/{id}', [ClubController::class, 'show']);
+$router->post('/club/join', [ClubController::class, 'joinClub']);
+$router->post('/club/leave', [ClubController::class, 'leave']);
 
 
 // Dashboard Routes
 $router->get('/dashboard', [DashboardController::class, 'index']); // Student Overview
-$router->get('/dashboard/events', [DashboardController::class, 'studentEvents']);
-$router->get('/dashboard/articles', [DashboardController::class, 'studentArticles']);
 
 // President Routes
 $router->get('/dashboard/president', [DashboardController::class, 'president']);
-$router->get('/dashboard/president/events', [EventController::class, 'index']);
-$router->get('/dashboard/president/articles', [DashboardController::class, 'presidentArticles']);
 $router->post('/dashboard/president/articles', [ArticlesController::class, 'createArticle']);
 $router->get('/dashboard/president/articles/success', [ArticlesController::class, 'articleSuccess']);
 $router->get('/dashboard/president/articles/failure', [ArticlesController::class, 'articleFailure']);
@@ -40,8 +40,6 @@ $router->post('/dashboard/president/articles/edit', [ArticlesController::class, 
 
 // Admin Routes
 $router->get('/dashboard/admin', [AdminController::class, 'admin']);
-$router->get('/dashboard/admin/students', [DashboardController::class, 'adminStudents']);
-$router->get('/dashboard/admin/logs', [DashboardController::class, 'adminLogs']);
 $router->get('/dashboard/admin/club/{id}', [DashboardController::class, 'adminClubDetails']);
 $router->get('/dashboard/admin/student/delete/{id}', [AdminController::class, 'deleteStudent']);
 
@@ -53,5 +51,8 @@ $router->post('/dashboard/admin/club/update', [AdminController::class, 'clubaupd
 
 // Global Actions
 $router->post('/events/store', [EventController::class, 'store']);
+$router->post('/event/register', [EventController::class, 'register']);
+$router->post('/event/cancel', [EventController::class, 'cancel']);
+$router->post('/avis/add', [AvisController::class, 'addAvis']);
 
 $router->dispatch();

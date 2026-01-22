@@ -22,11 +22,8 @@ class AvisService
 
     public function findAvis($data)
     {
-
-        $avisRepo = new ParticipentRepository();
-
-        return $avisRepo->findbyid($data);
-
+        $partRepo = new ParticipentRepository();
+        return $partRepo->findbyid($data);
     }
 
 
@@ -43,31 +40,35 @@ class AvisService
             }
         }
 
-        if ($CommentData['note'] > 5 || $CommentData['note'] < 0) {
+        if ($CommentData['note'] > 5 || $CommentData['note'] < 1) {
             return [
                 'success' => false,
-                'message' => "Note need be entre 1 - 5 ."
+                'message' => "Rating must be between 1 and 5."
             ];
         }
 
-
-        $userId = ['id_user' => $CommentData['id_user']];
-
-        $participent = $this->findAvis($userId);
-
-        if (!$participent) {
+        // Check if user participated in THIS specific event
+        $eventRepo = new \App\Repository\EventRepository();
+        if (!$eventRepo->isUserRegistered((int)$CommentData['id_event'], (int)$CommentData['id_user'])) {
             return [
                 'success' => false,
-                'message' => "Vous devez participer avant de donner votre avis."
+                'message' => "You must participate in this event before giving your review."
             ];
         }
 
-        $this->avisRepo->create($CommentData);
+        // Check if user already reviewed this event
+        if ($this->avisRepo->hasUserReviewedEvent((int)$CommentData['id_user'], (int)$CommentData['id_event'])) {
+            return [
+                'success' => false,
+                'message' => "You have already submitted a review for this event."
+            ];
+        }
+
+        $id = $this->avisRepo->create($CommentData);
 
         return [
-            'success' => true,
-            'message' => "avis added succesc"
+            'success' => $id !== false,
+            'message' => $id !== false ? "Review added successfully!" : "Failed to save review."
         ];
     }
-
 }

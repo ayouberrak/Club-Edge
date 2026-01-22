@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="py-10 flex flex-col md:flex-row gap-8" x-data="{ activeTab: 'overview', showReviewModal: false, selectedEvent: null }">
+<div class="py-10 flex flex-col md:flex-row gap-8" x-data="{ activeTab: 'overview', showReviewModal: false, selectedEvent: null, selectedEventId: null }">
     <!-- Sidebar -->
     <aside class="w-full md:w-64 space-y-4">
         <div class="glass p-6 rounded-2xl border border-slate-800">
@@ -66,11 +66,38 @@
                 <p class="text-slate-400">Welcome back, check your current club status and event RSVPs.</p>
             </header>
 
+            @if(isset($_GET['success']))
+                <div class="p-4 bg-green-500/10 border border-green-500/20 rounded-2xl text-green-400 text-sm flex items-center animate-fadeIn">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>
+                        @switch($_GET['success'])
+                            @case('registered') Successfully registered! See you there. @break
+                            @case('cancelled') Your participation has been cancelled. @break
+                            @case('review_added') Thanks for your feedback! Your review has been saved. @break
+                            @default Operation successful!
+                        @endswitch
+                    </span>
+                </div>
+            @endif
+
+            @if(isset($_GET['error']))
+                <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm flex items-center animate-fadeIn">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>
+                        @switch($_GET['error'])
+                            @case('csrf_error') Error: Session expired. Please refresh. @break
+                            @case('already_registered') You are already registered. @break
+                            @default Something went wrong. Error: {{ htmlspecialchars($_GET['error']) }}
+                        @endswitch
+                    </span>
+                </div>
+            @endif
+
             <!-- Stats -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="glass p-6 rounded-2xl border border-slate-800 border-l-4 border-l-green-500 shadow-xl shadow-green-500/5">
                     <div class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">Current Club</div>
-                    <div class="text-2xl font-bold text-white">{{ $my_club['name'] ?? 'No Club' }}</div>
+                    <div class="text-2xl font-bold text-white">{{ $my_club['nom'] ?? 'No Club' }}</div>
                 </div>
                 <div class="glass p-6 rounded-2xl border border-slate-800 border-l-4 border-l-blue-500">
                     <div class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">Upcoming Events</div>
@@ -86,7 +113,7 @@
             @if($my_club)
                 <div class="glass p-8 rounded-3xl border border-slate-800 relative overflow-hidden">
                     <div class="flex flex-col md:flex-row items-center gap-8 relative z-10">
-                        <img src="{{ $my_club['image_url'] ?? 'https://images.unsplash.com/photo-1581092160562-40aa08e78837'}}" class="w-32 h-32 rounded-2xl object-cover shadow-2xl">
+                        <img src="{{ $base_url }}/assets/img/{{ $my_club['image_url'] ?? 'https://images.unsplash.com/photo-1581092160562-40aa08e78837'}}" class="w-32 h-32 rounded-2xl object-cover shadow-2xl">
                         <div class="flex-grow text-center md:text-left">
                             <h2 class="text-3xl font-bold text-white mb-2">{{ $my_club['nom'] }}</h2>
                             <p class="text-slate-400 text-sm mb-6 max-w-md">You joined this club on <span class="text-green-400 font-bold">{{ date('M d, Y', strtotime($my_club['joined_at'])) }}</span>. You are an active member contributing to its growth.</p>
@@ -96,8 +123,29 @@
                             </div>
                         </div>
                     </div>
-                    <div class="absolute top-0 right-0 p-8">
-                        <button @click="$dispatch('toast', { message: 'Request to leave club sent!', type: 'success' })" class="text-red-900 font-bold text-xs uppercase hover:text-red-500 transition-colors">Leave Club</button>
+                    <div class="absolute top-0 right-0 p-8 z-50" x-data="{ confirming: false }">
+                        <button 
+                            x-show="!confirming" 
+                            @click="confirming = true" 
+                            class="text-red-900 font-bold text-xs uppercase hover:text-red-500 transition-colors">
+                            Leave Club
+                        </button>
+
+                        <div x-show="confirming" x-cloak class="flex flex-col items-end space-y-2">
+                            <span class="text-[10px] text-red-400 font-bold uppercase">Are you sure?</span>
+                            <div class="flex space-x-3">
+                                <button @click="confirming = false" class="text-slate-400 text-xs font-bold uppercase">Cancel</button>
+                                
+                                <form action="{{ $base_url }}/club/leave" method="POST">
+                                    <button 
+                                        type="submit" 
+                                        @click="$dispatch('toast', { message: 'Leaving club...', type: 'info' })"
+                                        class="text-red-500 font-bold text-xs uppercase underline">
+                                        Confirm Leave
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             @else
@@ -118,11 +166,11 @@
                 <div class="glass p-6 rounded-3xl border border-slate-800 relative group">
                     <div class="flex justify-between items-start mb-6">
                         <div class="w-12 h-12 bg-slate-800 rounded-xl flex flex-col items-center justify-center border border-slate-700">
-                            <span class="text-[10px] font-black uppercase text-blue-500">FEB</span>
+                            <span class="text-[10px] font-black uppercase text-blue-500">{{ date('M', strtotime($event['date'])) }}</span>
                             <span class="text-lg font-bold text-white">{{ date('d', strtotime($event['date'])) }}</span>
                         </div>
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase {{ $event['status'] === 'upcoming' ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20' : 'bg-slate-800 text-slate-500' }}">
-                            {{ $event['status'] }}
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase {{ strtotime($event['date']) >= time() ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20' : 'bg-slate-800 text-slate-500' }}">
+                            {{ strtotime($event['date']) >= time() ? 'upcoming' : 'completed' }}
                         </span>
                     </div>
                     <h3 class="text-xl font-bold mb-2 group-hover:text-green-400 transition-colors">{{ $event['title'] }}</h3>
@@ -131,14 +179,19 @@
                         {{ $event['location'] }}
                     </p>
                     
-                    @if($event['status'] === 'completed' && !$event['reviewed'])
-                    <button @click="selectedEvent = '{{ $event['title'] }}'; showReviewModal = true" class="w-full py-4 bg-green-600 rounded-2xl font-black text-xs uppercase tracking-widest text-white shadow-lg shadow-green-600/20 hover:scale-[1.02] transition-all">
-                        Rate & Review
-                    </button>
-                    @elseif($event['status'] === 'upcoming')
-                    <button @click="$dispatch('toast', { message: 'RSVP Cancelled!', type: 'error' })" class="w-full py-4 bg-slate-800 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-400 border border-slate-700 hover:bg-slate-700 transition-all">
-                        Cancel RSVP
-                    </button>
+                    @if(strtotime($event['date']) < time())
+                        <button @click="selectedEvent = '{{ addslashes($event['title']) }}'; selectedEventId = {{ $event['id'] }}; showReviewModal = true" class="w-full py-4 bg-green-600 rounded-2xl font-black text-xs uppercase tracking-widest text-white shadow-lg shadow-green-600/20 hover:scale-[1.02] transition-all">
+                            Rate & Review
+                        </button>
+                    @else
+                        <form action="{{ $base_url }}/event/cancel" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ $_SESSION['csrf_token'] }}">
+                            <input type="hidden" name="event_id" value="{{ $event['id'] }}">
+                            <input type="hidden" name="redirect_to" value="/dashboard">
+                            <button type="submit" class="w-full py-4 bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all border border-red-500/20">
+                                Cancel RSVP
+                            </button>
+                        </form>
                     @endif
                 </div>
                 @endforeach
@@ -146,21 +199,52 @@
         </div>
 
         <!-- Tab: Articles -->
-        <div x-show="activeTab === 'articles'" class="space-y-8 animate-fadeIn">
-            <h2 class="text-3xl font-bold text-white">Club Insights</h2>
-            <div class="grid grid-cols-1 gap-6">
+        <div x-show="activeTab === 'articles'" class="space-y-6 animate-fadeIn">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-2xl font-bold text-white">Club Insights</h2>
+                <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">Latest News</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 @foreach($past_articles as $article)
-                <div class="glass p-8 rounded-3xl border border-slate-800 hover:border-emerald-500/40 transition-all cursor-pointer">
-                    <div class="flex items-center space-x-2 text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-4">
-                        <span>{{ $article['club'] }}</span>
-                        <span>•</span>
-                        <span>{{ $article['date'] }}</span>
+                <div class="glass group rounded-xl border border-slate-800/40 overflow-hidden hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/5 cursor-pointer flex flex-col h-full">
+                    <!-- Image Section -->
+                    <div class="h-32 relative overflow-hidden">
+                        @php
+                            $imgFile = !empty($article['image_article']) ? $article['image_article'] : (!empty($article['image_event']) ? $article['image_event'] : 'logo.png');
+                            if (!empty($article['image_article'])) {
+                                $imgSrc = $base_url . '/upload/image_article/' . $article['image_article'];
+                            } elseif (!empty($article['image_event'])) {
+                                $imgSrc = $base_url . '/assets/img/' . $article['image_event'];
+                            } else {
+                                $imgSrc = $base_url . '/assets/img/logo.png';
+                            }
+                            if (strpos($imgFile, 'http') === 0) $imgSrc = $imgFile;
+                        @endphp
+                        <img src="{{ $imgSrc }}" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" 
+                             alt="{{ $article['event_title'] }}">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                        <div class="absolute bottom-2 left-3">
+                            <span class="text-[8px] font-black text-emerald-400 uppercase tracking-widest">{{ $article['club_name'] }}</span>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold text-white mb-4 leading-tight">{{ $article['title'] }}</h3>
-                    <p class="text-slate-400 text-sm mb-6 line-clamp-2">Discover how we are integrating advanced neural networks into our latest robotics project. Our team has spent weeks refining the algorithms for better balance...</p>
-                    <div class="flex items-center text-emerald-400 text-xs font-bold uppercase tracking-widest">
-                        Read Story 
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+
+                    <!-- Content Section -->
+                    <div class="p-4 flex flex-col flex-grow">
+                        <div class="text-[8px] font-medium text-slate-500 mb-1 uppercase tracking-widest">
+                            {{ date('d M, Y', strtotime($article['date'])) }}
+                        </div>
+                        <h3 class="text-sm font-bold text-white mb-2 leading-tight group-hover:text-emerald-400 transition-colors line-clamp-2">
+                            {{ $article['event_title'] }}
+                        </h3>
+                        <p class="text-slate-500 text-[10px] line-clamp-2 leading-relaxed mb-4">
+                            {{ $article['contenu'] }}
+                        </p>
+                        <div class="mt-auto flex items-center text-emerald-500 text-[8px] font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
+                            Details
+                            <svg class="w-3 h-3 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
                     </div>
                 </div>
                 @endforeach
@@ -169,17 +253,25 @@
     </main>
 
     <!-- Review Modal -->
-    <div x-show="showReviewModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md" x-cloak>
-        <div class="glass w-full max-w-lg p-10 rounded-[2.5rem] border border-green-500/30 shadow-2xl shadow-green-500/10" @click.away="showReviewModal = false">
+    <div x-show="showReviewModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md" x-cloak x-transition>
+        <div class="glass w-full max-w-lg p-10 rounded-[2.5rem] border border-green-500/30 shadow-2xl shadow-green-500/10" @click.away="showReviewModal = false" x-data="{ rating: 0 }">
             <h2 class="text-3xl font-black text-white mb-2 leading-none uppercase tracking-tighter">Share Experience</h2>
             <p class="text-slate-500 text-sm mb-10">How was the <span x-text="selectedEvent" class="text-green-400 font-bold"></span>?</p>
             
-            <form class="space-y-8">
+            <form action="{{ $base_url }}/avis/add" method="POST" class="space-y-8">
+                <input type="hidden" name="csrf_token" value="{{ $_SESSION['csrf_token'] }}">
+                <input type="hidden" name="id_event" :value="selectedEventId">
+                <input type="hidden" name="note" :value="rating">
+                <input type="hidden" name="redirect_to" value="/dashboard">
+
                 <div>
                     <label class="block text-[10px] font-black text-green-500 uppercase tracking-[0.3em] mb-4 text-center">Your Rating</label>
                     <div class="flex justify-center space-x-3">
                         <template x-for="i in 5">
-                            <button type="button" class="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500 hover:text-yellow-400 hover:border-yellow-400 transition-all">
+                            <button type="button" 
+                                @click="rating = i"
+                                :class="rating >= i ? 'text-yellow-400 border-yellow-400 bg-yellow-400/10' : 'text-slate-500 border-slate-700 bg-slate-800'"
+                                class="w-12 h-12 rounded-2xl border flex items-center justify-center transition-all hover:scale-110">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
                             </button>
                         </template>
@@ -187,11 +279,11 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-black text-green-500 uppercase tracking-[0.3em] mb-3">Written Review</label>
-                    <textarea class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 text-white text-sm h-32 focus:border-green-500 focus:outline-none transition-all placeholder:italic" placeholder="Tell us what you liked (or didn't like)..."></textarea>
+                    <textarea name="commentaire" required class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 text-white text-sm h-32 focus:border-green-500 focus:outline-none transition-all placeholder:italic" placeholder="Tell us what you liked (or didn't like)..."></textarea>
                 </div>
                 <div class="flex gap-4">
                     <button type="button" @click="showReviewModal = false" class="flex-1 py-4 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">Maybe later</button>
-                    <button type="button" @click="showReviewModal = false; $dispatch('toast', { message: 'Thanks for your feedback!', type: 'success' })" class="flex-[2] bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-lg shadow-green-600/30 hover:scale-[1.02] transition-all">Submit Review</button>
+                    <button type="submit" class="flex-[2] bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-lg shadow-green-600/30 hover:scale-[1.02] transition-all">Submit Review</button>
                 </div>
             </form>
         </div>

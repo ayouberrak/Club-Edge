@@ -9,7 +9,6 @@ use PDO;
 class EventRepository
 {
     private PDO $db;
-/* // turbo */
     public function __construct()
     {
         $this->db = Database::getInstance()->getConnection();
@@ -81,5 +80,35 @@ class EventRepository
     {
         $stmt = $this->db->prepare("DELETE FROM events WHERE id_event = :id");
         return $stmt->execute([':id' => $id]);
+    }
+
+    public function registerParticipation(int $eventId, int $userId): bool
+    {
+        $sql = "INSERT INTO participations (id_event, id_user) VALUES (:id_event, :id_user)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id_event' => $eventId,
+            ':id_user' => $userId
+        ]);
+    }
+
+    public function isUserRegistered(int $eventId, int $userId): bool
+    {
+        $sql = "SELECT COUNT(*) FROM participations WHERE id_event = :id_event AND id_user = :id_user";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':id_event' => $eventId,
+            ':id_user' => $userId
+        ]);
+        return (int)$stmt->fetchColumn() > 0;
+    }
+    public function deleteParticipation(int $eventId, int $userId): bool
+    {
+        $sql = "DELETE FROM participations WHERE id_event = :id_event AND id_user = :id_user";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id_event' => $eventId,
+            ':id_user' => $userId
+        ]);
     }
 }

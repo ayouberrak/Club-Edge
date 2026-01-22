@@ -101,4 +101,77 @@ class EventController extends Controller
             header('Location: /events?deleted=1');
         }
     }
+
+    public function register($data)
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $baseUrl = $this->view->shared('base_url');
+
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . $baseUrl . '/login');
+            exit;
+        }
+
+        // CSRF Check
+        if(!isset($data['csrf_token']) || $data['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
+            header('Location: ' . $baseUrl . '/dashboard/events?error=csrf_error');
+            exit;
+        }
+
+        $eventId = (int)($data['event_id'] ?? 0);
+        $userId = $_SESSION['user_id'];
+        $redirectPath = $data['redirect_to'] ?? '/dashboard/events';
+
+        if ($eventId > 0) {
+            try {
+                $result = $this->eventService->registerStudentToEvent($eventId, $userId);
+                
+                if ($result) {
+                    header('Location: ' . $baseUrl . $redirectPath . (strpos($redirectPath, '?') !== false ? '&' : '?') . 'success=registered');
+                } else {
+                    header('Location: ' . $baseUrl . $redirectPath . (strpos($redirectPath, '?') !== false ? '&' : '?') . 'error=already_registered');
+                }
+            } catch (\Exception $e) {
+                header('Location: ' . $baseUrl . $redirectPath . (strpos($redirectPath, '?') !== false ? '&' : '?') . 'error=' . urlencode($e->getMessage()));
+            }
+        } else {
+            header('Location: ' . $baseUrl . $redirectPath . (strpos($redirectPath, '?') !== false ? '&' : '?') . 'error=invalid_event');
+        }
+        exit;
+    }
+
+    public function cancel($data)
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $baseUrl = $this->view->shared('base_url');
+
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . $baseUrl . '/login');
+            exit;
+        }
+
+        // CSRF Check
+        if(!isset($data['csrf_token']) || $data['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
+            header('Location: ' . $baseUrl . '/dashboard/events?error=csrf_error');
+            exit;
+        }
+
+        $eventId = (int)($data['event_id'] ?? 0);
+        $userId = $_SESSION['user_id'];
+        $redirectPath = $data['redirect_to'] ?? '/dashboard/events';
+
+        if ($eventId > 0) {
+            try {
+                $this->eventService->cancelStudentParticipation($eventId, $userId);
+                header('Location: ' . $baseUrl . $redirectPath . (strpos($redirectPath, '?') !== false ? '&' : '?') . 'success=cancelled');
+            } catch (\Exception $e) {
+                header('Location: ' . $baseUrl . $redirectPath . (strpos($redirectPath, '?') !== false ? '&' : '?') . 'error=' . urlencode($e->getMessage()));
+            }
+        } else {
+            header('Location: ' . $baseUrl . $redirectPath . (strpos($redirectPath, '?') !== false ? '&' : '?') . 'error=invalid_event');
+        }
+        exit;
+    }
 }

@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Club Edge - The Ultimate Experience' }}</title>
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -59,16 +56,6 @@
         
         body {
             background-color: #020617;
-            color: white;
-            overflow-x: hidden;
-            font-family: 'Outfit', sans-serif;
-            background-image: 
-                radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.08) 0, transparent 50%),
-                radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.03) 0, transparent 40%);
-        }
-
-        /* Noise Texture */
-        body::after {
             content: "";
             position: fixed;
             top: 0;
@@ -168,17 +155,14 @@
     }
 }" @toast.window="addToast($event.detail.message, $event.detail.type)">
 
-    <!-- Deep Background Layer -->
     <div class="fixed inset-0 z-[-2] bg-[#020617]"></div>
     
-    <!-- Animated Orbs -->
     <div class="fixed inset-0 z-[-1] pointer-events-none opacity-40">
         <div class="absolute top-[-10%] left-[-5%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[140px] animate-pulse-slow"></div>
         <div class="absolute bottom-[10%] right-[-5%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px] animate-pulse-slow" style="animation-delay: 2s;"></div>
         <div class="absolute top-[30%] right-[10%] w-[30%] h-[30%] bg-emerald-500/5 rounded-full blur-[100px] animate-pulse-slow" style="animation-delay: 4s;"></div>
     </div>
 
-    <!-- Toast UI -->
     <div class="fixed top-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none">
         <template x-for="toast in toasts" :key="toast.id">
             <div x-transition:enter="transition ease-out duration-500"
@@ -199,7 +183,6 @@
         </template>
     </div>
 
-    <!-- Premium Navbar -->
     <header class="sticky top-0 z-50 py-8 px-6 transition-all duration-500" x-data="{ scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
         <div class="container mx-auto">
             <div :class="scrolled ? 'py-4 px-8 rounded-[3rem] shadow-2xl bg-slate-950/80 border-white/5' : 'py-6 px-10 rounded-[3.5rem] bg-transparent border-transparent'" class="glass flex items-center justify-between transition-all duration-500 backdrop-blur-xl">
@@ -261,10 +244,6 @@
                     @endif
                 </div>
 
-                <!-- <div class="flex items-center space-x-8">
-                    <a href="{{ $base_url }}/login" class="text-[11px] font-bold text-slate-400 hover:text-white uppercase tracking-[0.3em] transition-all">Portal</a>
-                    <a href="{{ $base_url }}/register" class="btn-gradient px-10 py-5 rounded-[1.8rem] text-[11px] font-black text-white uppercase tracking-[0.3em] shadow-xl shadow-indigo-600/20">Join Orbit</a>
-                </div> -->
             </div>
         </div>
     </header>
@@ -273,7 +252,6 @@
         @yield('content')
     </main>
 
-    <!-- Ultimate Footer -->
     <footer class="border-t border-white/5 py-32 bg-slate-950">
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-20 items-center justify-items-center mb-24">
@@ -305,7 +283,6 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>

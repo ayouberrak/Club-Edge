@@ -36,4 +36,12 @@ class AvisRepository extends GenericRepository {
         }
     }
 
+    public function hasUserReviewedEvent(int $userId, int $eventId): bool
+    {
+        $sql = "SELECT COUNT(*) FROM avis WHERE id_user = :id_user AND id_event = :id_event";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id_user' => $userId, ':id_event' => $eventId]);
+        return (int)$stmt->fetchColumn() > 0;
+    }
+
 }

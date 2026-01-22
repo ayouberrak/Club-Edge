@@ -4,7 +4,7 @@
 <div class="space-y-12 py-10" x-data="{ rsvpDone: false }">
     <div class="glass p-8 md:p-16 rounded-[3rem] border border-slate-700 overflow-hidden relative group">
         <div class="absolute top-0 right-0 w-1/2 h-full opacity-30 pointer-events-none group-hover:scale-110 transition-transform duration-700">
-            <img src="{{ $club['image'] }}" class="w-full h-full object-cover">
+            <img src="{{ $base_url }}/assets/img/{{$club['image_url'] }}" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-l from-transparent to-slate-900"></div>
         </div>
         
@@ -18,7 +18,7 @@
                 </div>
             </div>
             
-            <h1 class="text-6xl md:text-7xl font-black text-white mb-6 leading-none tracking-tighter">{{ $club['name'] }}</h1>
+            <h1 class="text-6xl md:text-7xl font-black text-white mb-6 leading-none tracking-tighter">{{ $club['nom'] }}</h1>
             <p class="text-xl text-slate-400 mb-10 leading-relaxed font-medium">
                 {{ $club['description'] }}
             </p>
@@ -26,11 +26,11 @@
             <div class="flex flex-wrap gap-10 mb-12">
                 <div class="flex items-center space-x-4">
                     <div class="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-blue-400 font-black text-xl shadow-xl shadow-blue-500/5">
-                        {{ substr($club['president'], 0, 1) }}
+                        {{ substr($club['president'] ?? 'None', 0, 1) }}
                     </div>
                     <div>
                         <div class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black">President</div>
-                        <div class="text-lg font-bold text-white">{{ $club['president'] }}</div>
+                        <div class="text-lg font-bold text-white">{{ $club['president'] ?? 'To be assigned' }}</div>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -39,14 +39,34 @@
                     </div>
                     <div>
                         <div class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black">Community</div>
-                        <div class="text-lg font-bold text-white">{{ $club['members_count'] }} / {{ $club['max_members'] }} Members</div>
+                        <div class="text-lg font-bold text-white">{{ $club['members_count'] }} / {{ $club['max_membres'] }} Members</div>
                     </div>
                 </div>
             </div>
-            
-            <button class="btn-gradient px-12 py-5 rounded-3xl font-black text-lg shadow-2xl shadow-blue-500/20 active:scale-95 transition-transform">
-                Apply for Membership
-            </button>
+
+            @if(!isset($_SESSION['user_id']))
+                <a href="{{$base_url}}/login" class="btn-gradient px-12 py-5 rounded-3xl font-black text-lg inline-block">
+                    Login to Join
+                </a>
+            @elseif($user_membership)
+                @if($user_membership['id_club'] == $club['id_club'])
+                    <div class="flex items-center space-x-3 px-8 py-4 bg-green-500/10 border border-green-500/30 rounded-2xl text-green-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="font-black uppercase tracking-widest text-sm">You are a member</span>
+                    </div>
+                @else
+                    <div class="px-8 py-4 bg-slate-800 border border-slate-700 rounded-2xl text-slate-400 italic text-sm">
+                        You are already committed to another institution.
+                    </div>
+                @endif
+            @else
+                <form action="{{ $base_url }}/club/join" method="POST">
+                    <input type="hidden" name="club_id" value="{{ $club['id_club'] }}">
+                    <button type="submit" class="btn-gradient px-12 py-5 rounded-3xl font-black text-lg shadow-2xl shadow-blue-500/20 active:scale-95 transition-transform">
+                        Apply for Membership
+                    </button>
+                </form>
+            @endif
         </div>
     </div>
 
@@ -58,14 +78,35 @@
                 <h2 class="text-4xl font-bold text-white">Events Schedule</h2>
                 <div class="h-[2px] flex-grow bg-slate-800"></div>
             </div>
+
+            {{-- Alerts --}}
+            @if(isset($_GET['success']) && $_GET['success'] === 'registered')
+                <div class="p-4 bg-green-500/10 border border-green-500/20 rounded-2xl text-green-400 text-sm flex items-center animate-fadeIn">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Successfully registered for the event!</span>
+                </div>
+            @endif
+
+            @if(isset($_GET['error']))
+                <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm flex items-center animate-fadeIn">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>
+                        @switch($_GET['error'])
+                            @case('csrf_error') Session expired. Please refresh. @break
+                            @case('already_registered') You already joined this event. @break
+                            @default Error: {{ htmlspecialchars($_GET['error']) }}
+                        @endswitch
+                    </span>
+                </div>
+            @endif
             
             <div class="space-y-6">
                 @foreach($events as $event)
                 <div class="glass p-8 rounded-[2rem] border border-slate-800 flex flex-col md:flex-row justify-between items-center group hover:bg-slate-800/40 hover:border-blue-500/30 transition-all duration-300">
                     <div class="flex items-center space-x-8 mb-6 md:mb-0">
                         <div class="w-20 h-20 bg-slate-900 rounded-3xl flex flex-col items-center justify-center border border-slate-700 group-hover:border-blue-500/50 transition-colors">
-                            <span class="text-xs font-black text-blue-500 uppercase tracking-widest">{{ $event['month'] }}</span>
-                            <span class="text-3xl font-black text-white leading-tight">{{ $event['day'] }}</span>
+                            <span class="text-xs font-black text-blue-500 uppercase tracking-widest">{{ date('M', strtotime($event['date'])) }}</span>
+                            <span class="text-3xl font-black text-white leading-tight">{{ date('d', strtotime($event['date'])) }}</span>
                         </div>
                         <div>
                             <h3 class="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors mb-2">{{ $event['title'] }}</h3>
@@ -75,9 +116,34 @@
                             </div>
                         </div>
                     </div>
-                    <button @click="rsvpDone = true" :class="rsvpDone ? 'bg-green-600 text-white' : 'bg-slate-800 hover:bg-slate-700'" class="px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all">
-                        <span x-text="rsvpDone ? '✓ RSVP Done' : 'Join Event'"></span>
-                    </button>
+                    @php 
+                        $eventDate = strtotime($event['date']);
+                        $isPast = $eventDate < time();
+                    @endphp
+
+                    @if($isPast)
+                        <button disabled class="px-10 py-4 bg-slate-800/50 rounded-2xl font-black text-sm uppercase tracking-widest text-slate-500 border border-slate-700 cursor-not-allowed">
+                            Completed
+                        </button>
+                    @elseif($event['is_registered'] ?? false)
+                        <form action="{{ $base_url }}/event/cancel" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ $_SESSION['csrf_token'] ?? '' }}">
+                            <input type="hidden" name="event_id" value="{{ $event['id_event'] ?? $event['id'] }}">
+                            <input type="hidden" name="redirect_to" value="/club/{{ $club['id_club'] }}">
+                            <button type="submit" class="px-10 py-4 bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all border border-red-500/20">
+                                Cancel RSVP
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ $base_url }}/event/register" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ $_SESSION['csrf_token'] ?? '' }}">
+                            <input type="hidden" name="event_id" value="{{ $event['id_event'] ?? $event['id'] }}">
+                            <input type="hidden" name="redirect_to" value="/club/{{ $club['id_club'] }}">
+                            <button type="submit" class="px-10 py-4 bg-slate-800 hover:bg-blue-600 hover:text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all">
+                                Join Event
+                            </button>
+                        </form>
+                    @endif
                 </div>
                 @endforeach
             </div>
