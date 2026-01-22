@@ -11,7 +11,6 @@ class ClubRepository extends GenericRepository
         return 'clubs';
     }
     protected $db;
-/* // turbo */
     public function __construct()
     {
         $this->db = \Config\Database::getInstance()->getConnection();
@@ -41,23 +40,27 @@ class ClubRepository extends GenericRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);   
     }
 
-    public function findClub($clubId) {
-        $stmt = $this->db->prepare("SELECT c.*, 
-                                    u.nom as president, 
-                                    COALESCE(
-                                        (SELECT ROUND(AVG(a.note), 1)
-                                         FROM avis a 
-                                         JOIN events e ON a.id_event = e.id_event
-                                         WHERE e.id_club = c.id_club)
-                                    , 5.0) as rating,
-                                    FROM clubs c
-                                    JOIN users u ON c.id_president = u.id_user
-                                    LEFT JOIN club_members cm ON c.id_club = cm.id_club
-                                    WHERE c.id_club = :id_club
-                                    GROUP BY c.id_club, u.nom");
-        $stmt->execute(['id_club' => $clubId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+   public function findClub($clubId) {
+    $sql = "SELECT c.*, 
+                   u.nom as president, 
+                   COALESCE(
+                       (SELECT ROUND(AVG(a.note), 1)
+                        FROM avis a 
+                        JOIN events e ON a.id_event = e.id_event
+                        WHERE e.id_club = c.id_club)
+                   , 5.0) as rating,
+                   COUNT(cm.id_user) as current_members_count 
+            FROM clubs c
+            JOIN users u ON c.id_president = u.id_user
+            LEFT JOIN club_members cm ON c.id_club = cm.id_club
+            WHERE c.id_club = :id_club
+            GROUP BY c.id_club, u.nom"; 
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['id_club' => $clubId]);
+    
+    return $stmt->fetch(PDO::FETCH_ASSOC); 
+}
 
     public function addMemberToClub($clubId, $userId) {
         try {

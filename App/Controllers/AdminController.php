@@ -100,7 +100,6 @@ class AdminController extends Controller
         $potentialPresidents = $clubsService->getPotentialPresidents();
         $students = $etudiantService->getAllEtudiants();
 
-        // Admin Dashboard Data
         return $this->render('dashboards.admin', [
             'stats' => [
                 'total_clubs' => count($clubs),

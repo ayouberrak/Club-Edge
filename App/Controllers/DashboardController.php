@@ -8,7 +8,9 @@ use App\Services\ClubService;
 use Core\Controller;
 use App\Services\ArticleServices;
 use App\Repository\StudentRepository;
+use App\Services\EtudiantsServices;
 use App\Services\EventService;
+use Config\Database;
 
 class DashboardController extends Controller
 {
@@ -185,29 +187,50 @@ class DashboardController extends Controller
         ];
     }
 
-    public function adminClubDetails($id)
-    {
-        // Mock data for a specific club (e.g., Robotics Club)
-        return $this->render('dashboards.admin.club_details', [
-            'club' => [
-                'id' => $id,
-                'name' => 'Robotics Club',
-                'president' => 'Anas Errak',
-                'members' => 5,
-                'capacity' => 8,
-                'status' => 'active',
-                'description' => 'The premier robotics and automation research center on campus.'
-            ],
-            'events' => [
-                ['id' => 1, 'title' => 'Global AI Summit', 'date' => 'Oct 24, 2026', 'attendance' => 156],
-                ['id' => 2, 'title' => 'Workshop: Neural Networks', 'date' => 'Nov 12, 2026', 'attendance' => 42]
-            ],
-            'articles' => [
-                ['id' => 1, 'title' => 'How we built our first humanoid', 'author' => 'Anas Errak', 'date' => '2 days ago'],
-                ['id' => 2, 'title' => 'The future of campus robotics', 'author' => 'Mehdi Ray', 'date' => '1 week ago']
-            ]
-        ]);
+    
+public function adminClubDetails($id)
+{
+    $clubsService = new ClubService();
+    $club = $clubsService->getclubinfo((int)$id);
+    $clubs = $clubsService->getallclub();
+    $potentialPresidents = $clubsService->getPotentialPresidents();
+
+    if (!$club) {
+        header('Location: ' . \Core\Helpers::url('/dashboard/admin?error=club_not_found'));
+        exit;
     }
+
+
+    $eventService = new EventService();
+    $events = $eventService->getEventsByClub((int)$id);
+    $etudiantService = new EtudiantsServices();
+    $students = $etudiantService->getAllEtudiants();
+    $articleService = new ArticleServices();
+    $articles = $articleService->getArticlesByClub((int)$id);
+
+    return $this->render('dashboards.admin.club_details', [
+        'club' => [
+            'id'          => $club['id_club'],
+            'name'        => $club['nom'],
+            'president'   => $club['president'] ?? 'No President Assigned',
+            'members'     => $club['current_members_count'] ?? 0,
+            'capacity'    => $club['max_membres'],
+            'status'      => 'active', 
+            'description' => $club['description']
+        ],
+        'events' => $events,
+        'articles' => $articles,
+            'stats' => [
+                'total_clubs' => count($clubs),
+                'total_students' => count($students),
+                'pending_reviews' => 14,
+                'active_events' => 8
+            ],
+            'clubs' => $clubs,
+            'potentialPresidents' => $potentialPresidents,
+            'students' => $students
+            ]);
+}
 
     
 
