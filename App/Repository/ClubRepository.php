@@ -51,7 +51,7 @@ class ClubRepository extends GenericRepository
                    , 5.0) as rating,
                    COUNT(cm.id_user) as current_members_count 
             FROM clubs c
-            JOIN users u ON c.id_president = u.id_user
+            LEFT JOIN users u ON c.id_president = u.id_user
             LEFT JOIN club_members cm ON c.id_club = cm.id_club
             WHERE c.id_club = :id_club
             GROUP BY c.id_club, u.nom"; 

@@ -203,13 +203,15 @@ public function adminClubDetails($id)
 {
     $clubsService = new ClubService();
     $club = $clubsService->getclubinfo((int)$id);
+
+    if (!$club) {
+        header('Location: ' . $this->view->shared('base_url') . '/admin/clubs');
+        exit;
+    }
+
     $clubs = $clubsService->getallclub();
     $potentialPresidents = $clubsService->getPotentialPresidents();
 
-    if (!$club) {
-        header('Location: ' . \Core\Helpers::url('/dashboard/admin?error=club_not_found'));
-        exit;
-    }
 
 
     $eventService = new EventService();
