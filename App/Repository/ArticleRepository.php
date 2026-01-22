@@ -16,7 +16,12 @@ class ArticleRepository
         $this->pdo = Database::getInstance()->getConnection();
     }
 
-    
+    public function getCountArticles(): int
+    {
+        $stmt = $this->pdo->query("SELECT COUNT(*) FROM articles");
+        return (int)$stmt->fetchColumn();
+    }
+
     public function createArticle(Article  $article): bool
     {
         $sql = "INSERT INTO articles (contenu, id_event, image_article) VALUES (:contenu, :id_event, :image_article)";
@@ -59,24 +64,18 @@ class ArticleRepository
                     a.image_article as image,
                     e.titre as event_title,
                     e.date_event as event_date,
-                    a.date_creation as published_date -- Assuming this column exists, or we use event date
+                    a.date_creation as published_date 
                 FROM articles a
                 JOIN events e ON a.id_event = e.id_event
                 WHERE e.id_club = :id_club
-                ORDER BY a.date_creation DESC"; // Assuming date_creation exists
-        
-        // If date_creation doesn't exist, we might need to check schema. 
-        // For now let's assume it doesn't and just order by id or event date.
-        // Actually, let's check if date_creation exists. 
-        // Previous INSERT didn't show it. Likely timestamp default?
-        // Let's stick to safe columns for now.
-        
+                ORDER BY a.date_creation DESC"; 
+            
         $sql = "SELECT 
                     a.id_article as id,
                     a.contenu as content,
                     a.image_article as image,
-                    a.id_event, -- Needed for edit
-                    e.titre as title, -- Article title = Event title for now as we don't have article title
+                    a.id_event, 
+                    e.titre as title, 
                     e.date_event as date
                 FROM articles a
                 JOIN events e ON a.id_event = e.id_event

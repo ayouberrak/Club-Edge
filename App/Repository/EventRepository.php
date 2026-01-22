@@ -14,6 +14,13 @@ class EventRepository
         $this->db = \Config\Database::getInstance()->getConnection();
     }
 
+    public function getCountUpcomingEvents(): int
+    {
+        $sql = "SELECT COUNT(*) FROM events WHERE date_event >= CURRENT_DATE";
+        $stmt = $this->db->query($sql);
+        return (int)$stmt->fetchColumn();
+    }
+
 
     public function create(Event $event): bool
     {

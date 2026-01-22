@@ -8,6 +8,17 @@ use App\Repository\ParticipentRepository;
 
 class AvisService
 {
+    private AvisRepository $avisRepo;
+
+    public function __construct()
+    {
+        $this->avisRepo = new AvisRepository();
+    }
+
+    public function getAvisByClub(int $clubId): array
+    {
+        return $this->avisRepo->getAvisByClub($clubId);
+    }
 
     public function findAvis($data)
     {
@@ -51,8 +62,7 @@ class AvisService
             ];
         }
 
-        $avisRepo = new AvisRepository();
-        $avisRepo->create($CommentData);
+        $this->avisRepo->create($CommentData);
 
         return [
             'success' => true,

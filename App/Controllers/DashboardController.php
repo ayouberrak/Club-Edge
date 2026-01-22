@@ -2,22 +2,25 @@
 
 namespace App\Controllers;
 
-
+use App\Services\AvisService;
 use App\Services\AdminService;
 use App\Services\ClubService;
 use Core\Controller;
 use App\Services\ArticleServices;
 use App\Repository\StudentRepository;
+use App\Repository\EventRepository;
 use App\Services\EventService;
 
 class DashboardController extends Controller
 {
     private ArticleServices $articleServices;
+    private AvisService $avisService;
 
     public function __construct()
     {
         parent::__construct();
         $this->articleServices = new ArticleServices();
+        $this->avisService = new AvisService();
         if(session_status() == PHP_SESSION_NONE) session_start();
     }
 
@@ -105,11 +108,10 @@ class DashboardController extends Controller
                 'logo' => 'default_club.png' 
             ];
         } else {
-            // Ensure aliasing for view compatibility if needed, or rely on view updates
-            // But here I'm passing raw club data mostly.
             $members = $clubService->getClubMembers($club['id_club']);
             $events = $eventService->getEventsByClub($club['id_club']);
             $articles = $this->articleServices->getArticlesByClub($club['id_club']);
+            $comments = $this->avisService->getAvisByClub($club['id_club']);
         }
 
         // President Dashboard Data
@@ -117,7 +119,8 @@ class DashboardController extends Controller
             'club' => $club,
             'members' => $members,
             'events' => $events,
-            'articles' => $articles
+            'articles' => $articles,
+            'comments' => $comments ?? []
         ]);
     }
 
@@ -177,11 +180,16 @@ class DashboardController extends Controller
 
     private function getAdminStats()
     {
+        $clubRepo = new \App\Repository\ClubRepository();
+        $studentRepo = new \App\Repository\EtudiantRepository();
+        $articleRepo = new \App\Repository\ArticleRepository();
+        $eventRepo = new EventRepository();
+
         return [
-            'total_clubs' => 6,
-            'total_students' => 428,
-            'pending_reviews' => 14,
-            'active_events' => 8
+            'total_clubs' => $clubRepo->getCountClubs(),
+            'total_students' => $studentRepo->getCountUsers(),
+            'pending_reviews' => $articleRepo->getCountArticles(),
+            'active_events' => $eventRepo->getCountUpcomingEvents()
         ];
     }
 

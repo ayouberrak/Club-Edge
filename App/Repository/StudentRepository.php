@@ -25,8 +25,7 @@ class StudentRepository
     }
 
     public function getRegisteredEvents(int $userId) {
-       $stmt1 = $this->db->prepare("
-                                SELECT 
+       $stmt1 = $this->db->prepare("SELECT 
                                     e.id_event as id,
                                     e.titre as title, 
                                     e.date_event as date, 
