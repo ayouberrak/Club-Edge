@@ -51,25 +51,57 @@ class ArticleRepository
         return null;
     }
 
-    public function getArticlebyClub(int $id_club): ?array
-    {
-        $sql = "SELECT a.* FROM articles a
-                JOIN events e ON a.id_event = e.id_event
-                WHERE e.id_club = :id_club";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':id_club', $id_club);
-        $stmt->execute();
-        $articlesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $articles = [];
-        foreach ($articlesData as $article) {
-            $articles[] = new Article(
-                $article['id_article'],
-                $article['contenu'],
-                $article['id_event'],
-                $article['image_article'],
-            );
-        }
-        return $articles;
-    }
+    public function getArticlebyClub(int $id_club): array
+{
+    $sql = "SELECT 
+                a.id_article as id,
+                a.contenu as content,
+                a.image_article as image,
+                e.titre as title, 
+                e.date_event as date,
+                u.nom as author -- On récupère le nom de l'utilisateur (président)
+            FROM articles a
+            JOIN events e ON a.id_event = e.id_event
+            JOIN clubs c ON e.id_club = c.id_club
+            LEFT JOIN users u ON c.id_president = u.id_user
+            WHERE e.id_club = :id_club
+            ORDER BY e.date_event DESC";
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->bindValue(':id_club', $id_club, \PDO::PARAM_INT);
+    $stmt->execute();
     
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+}
+    
+    public function deleteArticle(int $id): bool
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM articles WHERE id_article = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    public function updateArticle(Article $article): bool
+    {
+        $sql = "UPDATE articles SET contenu = :contenu";
+        if ($article->getImageArticle()) {
+            $sql .= ", image_article = :image_article";
+        }
+        $sql .= " WHERE id_article = :id_article";
+        
+        $stmt = $this->pdo->prepare($sql);
+
+        $contenu = $article->getContenu();
+        $id = $article->getIdArticle();
+
+        $stmt->bindParam(':contenu', $contenu);
+        $stmt->bindParam(':id_article', $id, PDO::PARAM_INT);
+        
+        if ($article->getImageArticle()) {
+            $image = $article->getImageArticle();
+            $stmt->bindParam(':image_article', $image);
+        }
+
+        return $stmt->execute();
+    }
 }

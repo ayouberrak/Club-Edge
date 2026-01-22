@@ -2,7 +2,10 @@
 .vscode
 /cache
 /logs
+/public/assets/img
 
 
 /.env
 /public/upload
+/public/assets/img
+

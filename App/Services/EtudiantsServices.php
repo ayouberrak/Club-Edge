@@ -48,4 +48,14 @@ class  EtudiantsServices
     {
         return $this->etudiantsRepository->getPresidantByClub($id_club);
     }
+
+    public function getAllEtudiants()
+    {
+        return $this->etudiantsRepository->getAllEtudiants();
+    }
+
+    public function deleteStudent(int $id): bool
+    {
+        return $this->etudiantsRepository->deleteStudent($id);
+    }
 }

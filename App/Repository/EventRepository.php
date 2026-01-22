@@ -3,15 +3,16 @@
 namespace App\Repository;
 
 use App\Models\Event;
+use Config\Database;
 use PDO;
 
 class EventRepository
 {
     private PDO $db;
-
-    public function __construct(PDO $db)
+/* // turbo */
+    public function __construct()
     {
-        $this->db = $db;
+        $this->db = Database::getInstance()->getConnection();
     }
 
 
@@ -51,17 +52,21 @@ class EventRepository
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function findByClub(): array
+    public function findByClub(int $clubId): array
     {
         $sql = "SELECT 
+                id_event as id,
                 titre as title, 
                 date_event as date, 
-                '12' as attendance -- Valeur statique pour le test
+                lieu as location,
+                image_event as image,
+                (SELECT COUNT(*) FROM participations WHERE id_event = events.id_event) as participants
             FROM events 
-            WHERE id_club = 2";
+            WHERE id_club = :id_club
+            ORDER BY date_event DESC";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+        $stmt->execute([':id_club' => $clubId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
