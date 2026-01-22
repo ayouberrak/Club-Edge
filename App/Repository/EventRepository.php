@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Models\Event;
+use Config\Database;
 use PDO;
 
 class EventRepository
@@ -11,7 +12,14 @@ class EventRepository
 /* // turbo */
     public function __construct()
     {
-        $this->db = \Config\Database::getInstance()->getConnection();
+        $this->db = Database::getInstance()->getConnection();
+    }
+
+    public function getCountUpcomingEvents(): int
+    {
+        $sql = "SELECT COUNT(*) FROM events WHERE date_event >= CURRENT_DATE";
+        $stmt = $this->db->query($sql);
+        return (int)$stmt->fetchColumn();
     }
 
 

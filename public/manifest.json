@@ -1,16 +1,16 @@
-{
-    "name": "Club Edge Management",
-    "short_name": "ClubEdge",
-    "start_url": ".",
-    "display": "standalone",
-    "background_color": "#0f172a",
-    "theme_color": "#3b82f6",
-    "description": "Premium school club management platform.",
-    "icons": [
-        {
-            "src": "https://cdn-icons-png.flaticon.com/512/3061/3061341.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ]
-}
+    {
+        "name": "Club Edge Management",
+        "short_name": "ClubEdge",
+        "start_url": ".",
+        "display": "standalone",
+        "background_color": "#0f172a",
+        "theme_color": "#3b82f6",
+        "description": "Premium school club management platform.",
+        "icons": [
+            {
+                "src": "https://cdn-icons-png.flaticon.com/512/3061/3061341.png",
+                "sizes": "512x512",
+                "type": "image/png"
+            }
+        ]
+    }

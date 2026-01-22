@@ -78,7 +78,7 @@
                 
                 <!-- Image Container -->
                 <div class="relative h-72 w-full rounded-[2.8rem] overflow-hidden mb-8">
-                    <img src="<?php echo e($club['image_url']); ?>" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                    <img src="<?php echo e($base_url); ?>/assets/img/<?php echo e($club['image_url']); ?>" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent"></div>
                     
                     <!-- Status Badge -->   

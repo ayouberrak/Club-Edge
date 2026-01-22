@@ -21,7 +21,6 @@ $router->post('/login', [AuthController::class, 'postLogin']);
 $router->get('/logout', [AuthController::class, 'logout']);
 
 // Club Routes
-$router->get('/club/{id}', [ClubController::class, 'show']);
 
 
 // Dashboard Routes
@@ -54,6 +53,5 @@ $router->post('/dashboard/admin/club/update', [AdminController::class, 'clubaupd
 
 // Global Actions
 $router->post('/events/store', [EventController::class, 'store']);
-$router->get('/club/{id}', [ClubController::class, 'show']);
 
 $router->dispatch();

@@ -18,7 +18,7 @@ if (file_exists($envFile)) {
     }
 }
 
-// ErrorHandler::register() ;
+/*  ErrorHandler::register() ; */
 
 // Load routes and dispatch
 require_once __DIR__ . '/../routes/web.php';

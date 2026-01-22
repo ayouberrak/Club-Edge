@@ -32,7 +32,10 @@
                     </div>
                 </div>
                 <div class="flex justify-end">
-                    <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest group-hover:translate-x-1 transition-transform">View Full Profile →</span>
+                    <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest group-hover:translate-x-1 transition-transform"><a href="@url('/dashboard/admin/club/' . $club['id_club'])" 
+   class="px-4 py-2 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-all">
+   View Details
+</a></span>
                 </div>
             </div>
             

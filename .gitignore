@@ -9,3 +9,4 @@
 /public/upload
 /public/assets/img
 
+/cache/views/*

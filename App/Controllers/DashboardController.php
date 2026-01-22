@@ -2,22 +2,30 @@
 
 namespace App\Controllers;
 
-
+use App\Services\AvisService;
 use App\Services\AdminService;
 use App\Services\ClubService;
 use Core\Controller;
 use App\Services\ArticleServices;
 use App\Repository\StudentRepository;
+
+use App\Repository\EventRepository;
+
+use App\Services\EtudiantsServices;
+
 use App\Services\EventService;
+use Config\Database;
 
 class DashboardController extends Controller
 {
     private ArticleServices $articleServices;
+    private AvisService $avisService;
 
     public function __construct()
     {
         parent::__construct();
         $this->articleServices = new ArticleServices();
+        $this->avisService = new AvisService();
         if(session_status() == PHP_SESSION_NONE) session_start();
     }
 
@@ -105,11 +113,10 @@ class DashboardController extends Controller
                 'logo' => 'default_club.png' 
             ];
         } else {
-            // Ensure aliasing for view compatibility if needed, or rely on view updates
-            // But here I'm passing raw club data mostly.
             $members = $clubService->getClubMembers($club['id_club']);
             $events = $eventService->getEventsByClub($club['id_club']);
             $articles = $this->articleServices->getArticlesByClub($club['id_club']);
+            $comments = $this->avisService->getAvisByClub($club['id_club']);
         }
 
         // President Dashboard Data
@@ -117,7 +124,8 @@ class DashboardController extends Controller
             'club' => $club,
             'members' => $members,
             'events' => $events,
-            'articles' => $articles
+            'articles' => $articles,
+            'comments' => $comments ?? []
         ]);
     }
 
@@ -177,37 +185,63 @@ class DashboardController extends Controller
 
     private function getAdminStats()
     {
+        $clubRepo = new \App\Repository\ClubRepository();
+        $studentRepo = new \App\Repository\EtudiantRepository();
+        $articleRepo = new \App\Repository\ArticleRepository();
+        $eventRepo = new EventRepository();
+
         return [
-            'total_clubs' => 6,
-            'total_students' => 428,
-            'pending_reviews' => 14,
-            'active_events' => 8
+            'total_clubs' => $clubRepo->getCountClubs(),
+            'total_students' => $studentRepo->getCountUsers(),
+            'pending_reviews' => $articleRepo->getCountArticles(),
+            'active_events' => $eventRepo->getCountUpcomingEvents()
         ];
     }
 
-    public function adminClubDetails($id)
-    {
-        // Mock data for a specific club (e.g., Robotics Club)
-        return $this->render('dashboards.admin.club_details', [
-            'club' => [
-                'id' => $id,
-                'name' => 'Robotics Club',
-                'president' => 'Anas Errak',
-                'members' => 5,
-                'capacity' => 8,
-                'status' => 'active',
-                'description' => 'The premier robotics and automation research center on campus.'
-            ],
-            'events' => [
-                ['id' => 1, 'title' => 'Global AI Summit', 'date' => 'Oct 24, 2026', 'attendance' => 156],
-                ['id' => 2, 'title' => 'Workshop: Neural Networks', 'date' => 'Nov 12, 2026', 'attendance' => 42]
-            ],
-            'articles' => [
-                ['id' => 1, 'title' => 'How we built our first humanoid', 'author' => 'Anas Errak', 'date' => '2 days ago'],
-                ['id' => 2, 'title' => 'The future of campus robotics', 'author' => 'Mehdi Ray', 'date' => '1 week ago']
-            ]
-        ]);
+    
+public function adminClubDetails($id)
+{
+    $clubsService = new ClubService();
+    $club = $clubsService->getclubinfo((int)$id);
+    $clubs = $clubsService->getallclub();
+    $potentialPresidents = $clubsService->getPotentialPresidents();
+
+    if (!$club) {
+        header('Location: ' . \Core\Helpers::url('/dashboard/admin?error=club_not_found'));
+        exit;
     }
+
+
+    $eventService = new EventService();
+    $events = $eventService->getEventsByClub((int)$id);
+    $etudiantService = new EtudiantsServices();
+    $students = $etudiantService->getAllEtudiants();
+    $articleService = new ArticleServices();
+    $articles = $articleService->getArticlesByClub((int)$id);
+
+    return $this->render('dashboards.admin.club_details', [
+        'club' => [
+            'id'          => $club['id_club'],
+            'name'        => $club['nom'],
+            'president'   => $club['president'] ?? 'No President Assigned',
+            'members'     => $club['current_members_count'] ?? 0,
+            'capacity'    => $club['max_membres'],
+            'status'      => 'active', 
+            'description' => $club['description']
+        ],
+        'events' => $events,
+        'articles' => $articles,
+            'stats' => [
+                'total_clubs' => count($clubs),
+                'total_students' => count($students),
+                'pending_reviews' => 14,
+                'active_events' => 8
+            ],
+            'clubs' => $clubs,
+            'potentialPresidents' => $potentialPresidents,
+            'students' => $students
+            ]);
+}
 
     
 

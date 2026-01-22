@@ -90,6 +90,10 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 2v6h6"></path></svg>
                     <span>Manage Articles</span>
                 </button>
+                <button @click="activeTab = 'comments'" :class="activeTab === 'comments' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:text-white'" class="w-full flex items-center space-x-3 p-3 rounded-xl font-semibold transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                    <span>Student Feedback</span>
+                </button>
             </nav>
             <div class="mt-8 space-y-3">
                 <button @click="showEventModal = true" class="w-full btn-gradient py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-sm shadow-lg shadow-indigo-500/20">
@@ -263,6 +267,46 @@
                 @empty
                 <div class="col-span-2 text-center text-slate-500 py-10">
                     No stories published yet.
+                </div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Comments Tab -->
+        <div x-show="activeTab === 'comments'" class="glass p-8 rounded-3xl border border-white/5 animate-fadeIn">
+            <h2 class="text-2xl font-bold mb-8">Student Feedback</h2>
+            <div class="space-y-6">
+                @forelse($comments as $comment)
+                <div class="p-6 rounded-2xl bg-white/5 border border-white/5 hover:border-indigo-500/20 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold">
+                                {{ substr($comment['user_name'], 0, 1) }}
+                            </div>
+                            <div>
+                                <div class="font-bold text-white">{{ $comment['user_name'] }}</div>
+                                <div class="text-xs text-slate-500">{{ $comment['user_email'] }}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-4 h-4 {{ $i <= $comment['note'] ? 'text-yellow-500' : 'text-slate-700' }}" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                            </svg>
+                            @endfor
+                        </div>
+                    </div>
+                    <div class="text-slate-300 text-sm italic mb-4">
+                        "{{ $comment['commentaire'] }}"
+                    </div>
+                    <div class="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-indigo-400 opacity-60">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>On Event: {{ $comment['event_title'] }}</span>
+                    </div>
+                </div>
+                @empty
+                <div class="text-center text-slate-500 py-10">
+                    No feedback received yet for your club events.
                 </div>
                 @endforelse
             </div>

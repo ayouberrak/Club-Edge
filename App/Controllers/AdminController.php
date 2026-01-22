@@ -5,6 +5,8 @@ namespace App\Controllers;
 use App\Services\AdminService;
 use App\Services\ClubService;
 use App\Services\EtudiantsServices;
+use App\Repository\ArticleRepository;
+use App\Repository\EventRepository;
 use Core\Controller;
 
 class AdminController extends Controller
@@ -100,13 +102,16 @@ class AdminController extends Controller
         $potentialPresidents = $clubsService->getPotentialPresidents();
         $students = $etudiantService->getAllEtudiants();
 
+        $articleRepo = new ArticleRepository();
+        $eventRepo = new EventRepository();
+        
         // Admin Dashboard Data
         return $this->render('dashboards.admin', [
             'stats' => [
                 'total_clubs' => count($clubs),
                 'total_students' => count($students),
-                'pending_reviews' => 14,
-                'active_events' => 8
+                'pending_reviews' => $articleRepo->getCountArticles(),
+                'active_events' => $eventRepo->getCountUpcomingEvents()
             ],
             'clubs' => $clubs,
             'potentialPresidents' => $potentialPresidents,
