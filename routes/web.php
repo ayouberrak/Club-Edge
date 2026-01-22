@@ -22,6 +22,8 @@ $router->get('/logout', [AuthController::class, 'logout']);
 
 // Club Routes
 $router->get('/club/{id}', [ClubController::class, 'show']);
+$router->post('/club/join', [ClubController::class, 'joinClub']);
+$router->post('/club/leave', [ClubController::class, 'leave']);
 
 
 // Dashboard Routes

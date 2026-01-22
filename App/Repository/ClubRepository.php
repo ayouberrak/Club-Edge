@@ -50,13 +50,20 @@ class ClubRepository extends GenericRepository
                                          JOIN events e ON a.id_event = e.id_event
                                          WHERE e.id_club = c.id_club)
                                     , 5.0) as rating,
+                                    (SELECT COUNT(*) FROM club_members WHERE id_club = :id_club) as members_count,
+                                    (SELECT COUNT(*) FROM avis a JOIN events e ON a.id_event = e.id_event WHERE e.id_club = c.id_club) as reviews_count
                                     FROM clubs c
-                                    JOIN users u ON c.id_president = u.id_user
-                                    LEFT JOIN club_members cm ON c.id_club = cm.id_club
+                                    LEFT JOIN users u ON c.id_president = u.id_user
                                     WHERE c.id_club = :id_club
                                     GROUP BY c.id_club, u.nom");
         $stmt->execute(['id_club' => $clubId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getUserMemberShip($userId) {
+        $stmt = $this->db->prepare("SELECT id_club FROM club_members WHERE id_user = :id_user");
+        $stmt->execute(['id_user' => $userId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function addMemberToClub($clubId, $userId) {
@@ -72,7 +79,7 @@ class ClubRepository extends GenericRepository
 
                 $stmtUpdateClub = $this->db->prepare("UPDATE clubs SET id_president = :user_id WHERE id_club = :id_club");
                 $stmtUpdateClub->execute([
-                    'id_user' => $userId,
+                    'user_id' => $userId,
                     'id_club' => $clubId
                 ]);
 
@@ -95,6 +102,23 @@ class ClubRepository extends GenericRepository
             return false;
         }
     } 
+
+    public function leaveClub($userId) {
+        try {
+            
+            $stmt = $this->db->prepare("DELETE FROM club_members WHERE id_user = :id_user");
+            $result =  $stmt->execute(['id_user' => $userId]);
+
+            $stmtRole = $this->db->prepare("UPDATE user SET role = 'etudiant' WHERE id_user = :id_user");
+            $stmtRole->execute(['id_user' => $userId]);
+
+            return $result;
+        }catch(\Exception $e) {
+            return false;
+        }
+
+        
+    }
 
 
     public function getPotentialPresidents() {
