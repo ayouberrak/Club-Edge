@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repository\AvisRepository;
+use App\Repository\ParticipentRepository;
 
 
 class AvisService
@@ -11,7 +12,7 @@ class AvisService
     public function findAvis($data)
     {
 
-        $avisRepo = new AvisRepository();
+        $avisRepo = new ParticipentRepository();
 
         return $avisRepo->findbyid($data);
 
@@ -31,6 +32,14 @@ class AvisService
             }
         }
 
+        if ($CommentData['note'] > 5 || $CommentData['note'] < 0) {
+            return [
+                'success' => false,
+                'message' => "Note need be entre 1 - 5 ."
+            ];
+        }
+
+
         $userId = ['id_user' => $CommentData['id_user']];
 
         $participent = $this->findAvis($userId);
@@ -45,6 +54,10 @@ class AvisService
         $avisRepo = new AvisRepository();
         $avisRepo->create($CommentData);
 
+        return [
+            'success' => true,
+            'message' => "avis added succesc"
+        ];
     }
 
 }

@@ -11,6 +11,6 @@ class ParticipentRepository extends GenericRepository {
     public function getTablename() {
         return 'participations' ;
     }
-    
+
 
 }
