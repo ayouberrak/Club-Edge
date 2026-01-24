@@ -30,7 +30,15 @@ class ClubRepository extends GenericRepository
                                          JOIN events e ON a.id_event = e.id_event 
                                          WHERE e.id_club = c.id_club)
                                     , 5.0) as rating,
-                                    COUNT(cm.id_user) as club_members
+                                    COUNT(cm.id_user) as club_members,
+                                    (SELECT STRING_AGG(m.nom, ',') 
+                                     FROM (
+                                         SELECT u2.nom 
+                                         FROM club_members cm2 
+                                         JOIN users u2 ON cm2.id_user = u2.id_user 
+                                         WHERE cm2.id_club = c.id_club 
+                                         LIMIT 3
+                                     ) m) as member_names
                                     FROM clubs c
                                     LEFT JOIN users u ON c.id_president = u.id_user
                                     LEFT JOIN club_members cm ON c.id_club = cm.id_club

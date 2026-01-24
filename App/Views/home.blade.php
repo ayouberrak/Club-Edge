@@ -120,12 +120,27 @@
                     <!-- Footer Stats -->
                     <div class="pt-8 flex items-center justify-between border-t border-white/5">
                         <div class="flex items-center space-x-3">
-                            <div class="flex -space-x-3">
-                                <div class="w-10 h-10 rounded-full border-2 border-[#020617] bg-indigo-600 flex items-center justify-center font-black text-[10px] text-white">MK</div>
-                                <div class="w-10 h-10 rounded-full border-2 border-[#020617] bg-emerald-600 flex items-center justify-center font-black text-[10px] text-white">SA</div>
-                                <div class="w-10 h-10 rounded-full border-2 border-[#020617] bg-purple-600 flex items-center justify-center font-black text-[10px] text-white">AE</div>
-                            </div>
-                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ $club['club_members'] }} Joined</span>
+                            @if($club['club_members'] > 0)
+                                <div class="flex -space-x-3">
+                                    @php
+                                        $members = explode(',', $club['member_names']);
+                                        $colors = ['bg-indigo-600', 'bg-emerald-600', 'bg-purple-600', 'bg-rose-600', 'bg-amber-600'];
+                                    @endphp
+                                    @foreach($members as $index => $name)
+                                        @php
+                                            $initials = '';
+                                            $parts = explode(' ', trim($name));
+                                            foreach($parts as $part) if($part) $initials .= strtoupper($part[0]);
+                                            $initials = substr($initials, 0, 2);
+                                            $color = $colors[$index % count($colors)];
+                                        @endphp
+                                        <div class="w-10 h-10 rounded-full border-2 border-[#020617] {{ $color }} flex items-center justify-center font-black text-[10px] text-white" title="{{ $name }}">{{ $initials }}</div>
+                                    @endforeach
+                                </div>
+                                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ $club['club_members'] }} Joined</span>
+                            @else
+                                <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest">Aucun membre</span>
+                            @endif
                         </div>
                         
                         <a href="{{ $base_url }}/club/{{ $club['id_club'] }}" class="flex items-center space-x-3 bg-white/5 px-6 py-3 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-colors border border-white/5">

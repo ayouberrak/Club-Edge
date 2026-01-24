@@ -156,7 +156,7 @@
                 @foreach($articles as $article)
                 <div class="glass overflow-hidden rounded-[2.5rem] border border-slate-800 group hover:border-indigo-500/40 transition-all">
                     <div class="h-48 overflow-hidden">
-                        <img src="{{ $article['image'] }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <img src="{{ $base_url }}/upload/Image_article/{{ $article['image'] }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="p-8">
                         <h3 class="text-xl font-bold text-white mb-4 leading-tight group-hover:text-indigo-400 transition-colors">{{ $article['title'] }}</h3>
