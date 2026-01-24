@@ -1,4 +1,4 @@
-    @extends('layouts.main')
+@extends('layouts.main')
 
 @section('content')
 <div x-data="{ activeCategory: 'all', 

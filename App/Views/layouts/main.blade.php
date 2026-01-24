@@ -56,6 +56,12 @@
         
         body {
             background-color: #020617;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        body::after {
             content: "";
             position: fixed;
             top: 0;
